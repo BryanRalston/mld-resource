@@ -39,10 +39,12 @@
     {
       folder: 'family', title: 'Family Support', pages: [
         { file: 'family/index.html', title: 'Newly Diagnosed: Start Here', k: 'newly diagnosed what to do first steps urgent action plan checklist call today immediate next steps' },
+        { file: 'family/action-plan.html', title: 'Newly Diagnosed Action Plan', k: 'action plan checklist phone numbers Orchard Assist MLD Foundation Cure MLD financial help travel grants emotional support Global Genes NMDP Ronald McDonald House FMLA NORD Patient Advocate insurance' },
         { file: 'family/siblings.html', title: 'Siblings & Family Testing', k: 'siblings brothers sisters carrier testing genetic screening family 25 percent risk affected unaffected' },
         { file: 'family/genetic-counseling.html', title: 'Genetic Counseling', k: 'genetic counseling family planning prenatal testing preimplantation PGT IVF amniocentesis carrier screening future pregnancies' },
         { file: 'family/emotional-support.html', title: 'Emotional & Mental Health', k: 'emotional support mental health grief coping stress anxiety caregiver burnout counseling therapy self-care marriage sibling adjustment' },
-        { file: 'family/daily-life.html', title: 'Daily Life & Practical Tips', k: 'daily life practical tips home modifications equipment insurance school IEP early intervention services respite care' }
+        { file: 'family/daily-life.html', title: 'Daily Life & Practical Tips', k: 'daily life practical tips home modifications equipment insurance school IEP early intervention services respite care' },
+        { file: 'family/print-guide.html', title: 'Printable Guide', k: 'printable guide one pager fridge first steps phone numbers treatment centers financial help print diagnosis' }
       ]
     },
     {

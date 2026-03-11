@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Printable Guide: Your First Steps - MLD Family Resource</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+/* ===== ON-SCREEN PRINT BUTTON ===== */
+.print-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 14px 20px;
+  background: var(--sky-50);
+  border: 1px solid var(--sky-200);
+  border-radius: 12px;
+}
+.print-bar p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--warm-600);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--sky-600);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.3s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.btn-print:hover { background: var(--sky-700); }
+
+/* ===== ON-SCREEN ONE-PAGER LAYOUT ===== */
+.print-page {
+  max-width: 800px;
+}
+.print-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--warm-800);
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+.print-subtitle {
+  font-size: 1rem;
+  color: var(--warm-500);
+  margin: 0 0 20px;
+  font-style: italic;
+}
+.print-box {
+  border: 1px solid var(--warm-200);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.print-box h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--warm-200);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.box-calls { background: #fef2f2; border-color: var(--rose-100); }
+.box-calls h2 { color: var(--rose-600); border-bottom-color: var(--rose-100); }
+.box-centers { background: var(--sky-50); border-color: var(--sky-100); }
+.box-centers h2 { color: var(--sky-700); border-bottom-color: var(--sky-100); }
+.box-financial { background: var(--honey-50); border-color: #f0e4c0; }
+.box-financial h2 { color: var(--honey-500); border-bottom-color: #f0e4c0; }
+.box-hope { background: linear-gradient(135deg, var(--earth-50), var(--sky-50)); border-color: var(--earth-100); }
+.box-hope h2 { color: var(--earth-600); border-bottom-color: var(--earth-100); }
+
+.print-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.print-box th {
+  text-align: left;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.6);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--warm-600);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.print-box td {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  vertical-align: top;
+}
+.print-box tr:last-child td { border-bottom: none; }
+.print-box .phone {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--sky-700);
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.print-box .org-name {
+  font-weight: 600;
+  color: var(--warm-800);
+  white-space: nowrap;
+}
+.print-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.print-box li {
+  padding: 4px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+.print-box li strong {
+  color: var(--warm-800);
+}
+.print-box .hope-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+}
+.print-box .hope-text strong {
+  color: var(--sky-700);
+}
+.print-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--warm-500);
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--warm-200);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.print-footer a {
+  font-weight: 600;
+  color: var(--sky-600);
+}
+
+/* ===== PRINT STYLESHEET ===== */
+@media print {
+  /* Hide site chrome */
+  .site-header, .sidebar, .sidebar-overlay, .back-to-top, .hamburger,
+  .header-actions, .search-wrapper, .search-count,
+  .breadcrumb, .prev-next, .print-bar, .page-header { display: none !important; }
+
+  /* Reset layout */
+  html { font-size: 11px; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: white !important;
+    color: #000 !important;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .main { margin: 0 !important; padding: 8mm 10mm !important; max-width: 100% !important; }
+  .content { max-width: 100% !important; }
+  .page-body { margin: 0; }
+
+  /* Page size */
+  @page {
+    size: letter;
+    margin: 0;
+  }
+
+  /* Title area */
+  .print-title {
+    font-size: 18pt;
+    color: #000 !important;
+    margin-bottom: 1px;
+  }
+  .print-subtitle {
+    font-size: 10pt;
+    color: #444 !important;
+    margin-bottom: 10px;
+  }
+
+  /* Boxes */
+  .print-box {
+    border: 1.5pt solid #000 !important;
+    border-radius: 0 !important;
+    background: white !important;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+  .print-box h2 {
+    font-size: 11pt;
+    color: #000 !important;
+    border-bottom: 1pt solid #999 !important;
+    padding-bottom: 3px;
+    margin-bottom: 5px;
+  }
+
+  /* Table in boxes */
+  .print-box table { font-size: 9pt; }
+  .print-box th {
+    background: #eee !important;
+    color: #000 !important;
+    font-size: 8pt;
+    padding: 3px 6px;
+    border-bottom: 0.5pt solid #999;
+  }
+  .print-box td {
+    padding: 3px 6px;
+    border-bottom: 0.5pt solid #ddd;
+  }
+  .print-box .phone {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #000 !important;
+  }
+  .print-box .org-name {
+    color: #000 !important;
+  }
+
+  /* Lists in boxes */
+  .print-box li {
+    font-size: 9pt;
+    padding: 2px 0;
+    line-height: 1.4;
+  }
+  .print-box li strong { color: #000 !important; }
+
+  /* Hope text */
+  .print-box .hope-text {
+    font-size: 9.5pt;
+    line-height: 1.5;
+  }
+  .print-box .hope-text strong { color: #000 !important; }
+
+  /* Footer */
+  .print-footer {
+    font-size: 9pt;
+    color: #333 !important;
+    border-top: 0.5pt solid #999;
+    margin-top: 8px;
+    padding-top: 5px;
+  }
+  .print-footer a { color: #000 !important; text-decoration: underline; }
+
+  /* Suppress link expansion from site styles */
+  a[href]::after { content: none !important; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">&#9776;</button>
+  <a href="../" class="header-title">MLD <span>Family Resource</span></a>
+  <div class="search-wrapper">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Search this page..." aria-label="Search">
+  </div>
+  <span class="search-count" id="searchCount"></span>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<nav class="sidebar" id="sidebar"></nav>
+
+<div class="main">
+<div class="content">
+
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+
+  <div class="page-header">
+    <h1>Printable Guide: Your First Steps</h1>
+  </div>
+
+  <div class="print-bar">
+    <button class="btn-print" onclick="window.print()">&#128424; Print This Page</button>
+    <p>Designed to print on a single page. Give it to your family, tape it to your fridge, or bring it to your next appointment.</p>
+  </div>
+
+  <div class="page-body">
+    <div class="print-page">
+
+      <h1 class="print-title">MLD Diagnosis &mdash; Your First Steps</h1>
+      <p class="print-subtitle">Keep this on your fridge. Every call matters.</p>
+
+      <!-- BOX 1: CALL THESE NUMBERS -->
+      <div class="print-box box-calls">
+        <h2>&#9742; Call These Numbers This Week</h2>
+        <table>
+          <thead>
+            <tr><th>Who</th><th>Phone</th><th>What They Do</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="org-name">Orchard Assist</td>
+              <td class="phone"><a href="tel:833-672-4278">833-672-4278</a></td>
+              <td>Insurance, financial help, case manager for Lenmeldy gene therapy</td>
+            </tr>
+            <tr>
+              <td class="org-name">MLD Foundation</td>
+              <td class="phone"><a href="tel:503-656-4808">503-656-4808</a></td>
+              <td>20+ years fighting MLD. &ldquo;What Do I Do Next?&rdquo; guide</td>
+            </tr>
+            <tr>
+              <td class="org-name">Cure MLD</td>
+              <td class="phone"><a href="mailto:info@curemld.com">info@curemld.com</a></td>
+              <td>Parent mentor program &mdash; someone who&rsquo;s been through this</td>
+            </tr>
+            <tr>
+              <td class="org-name">NMDP Navigator</td>
+              <td class="phone"><a href="tel:888-999-6743">888-999-6743</a></td>
+              <td>Free support through gene therapy journey</td>
+            </tr>
+            <tr>
+              <td class="org-name">Global Genes</td>
+              <td class="phone"><a href="tel:949-248-7273">949-248-7273</a></td>
+              <td>Free family navigator, 6-week support program</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOX 2: TREATMENT CENTERS -->
+      <div class="print-box box-centers">
+        <h2>&#127973; Treatment Centers</h2>
+        <ul>
+          <li><strong>Minnesota:</strong> University of Minnesota Fairview, Minneapolis</li>
+          <li><strong>Atlanta:</strong> Children&rsquo;s Healthcare of Atlanta (CHOA)</li>
+          <li><strong>Philadelphia:</strong> Children&rsquo;s Hospital of Philadelphia (CHOP)</li>
+          <li><strong>Houston:</strong> Texas Children&rsquo;s Hospital</li>
+          <li><strong>San Francisco:</strong> UCSF Benioff Children&rsquo;s Hospital</li>
+        </ul>
+      </div>
+
+      <!-- BOX 3: FINANCIAL HELP -->
+      <div class="print-box box-financial">
+        <h2>&#128176; Financial Help</h2>
+        <ul>
+          <li><strong>Miracle Flights:</strong> <span class="phone"><a href="tel:800-359-1711">800-359-1711</a></span> &mdash; free flights to treatment</li>
+          <li><strong>Ronald McDonald House:</strong> free/low-cost housing near hospitals &mdash; <a href="https://ronaldmcdonaldhouse.org" target="_blank" rel="noopener">ronaldmcdonaldhouse.org</a></li>
+          <li><strong>NORD:</strong> <span class="phone"><a href="tel:860-556-2208">860-556-2208</a></span> &mdash; emergency relief for rent, utilities, bills</li>
+          <li><strong>Patient Advocate Foundation:</strong> <span class="phone"><a href="tel:800-532-5274">800-532-5274</a></span> &mdash; fights insurance denials</li>
+          <li><strong>FMLA:</strong> 12 weeks job-protected leave &mdash; talk to your HR</li>
+        </ul>
+      </div>
+
+      <!-- BOX 4: HOPE -->
+      <div class="print-box box-hope">
+        <h2>&#127793; Hope</h2>
+        <p class="hope-text"><strong>Lenmeldy gene therapy: 100% survival at age 6</strong> for pre-symptomatic babies. <strong>85% normal cognition.</strong> Treatment takes 4&ndash;6 months. The earlier, the better &mdash; <strong>every week counts.</strong></p>
+      </div>
+
+      <div class="print-footer">
+        More information: <a href="https://bryanralston.github.io/mld-resource">bryanralston.github.io/mld-resource</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="prev-next">
+    <a href="daily-life.html" class="prev-next-link">&larr; Daily Life &amp; Practical Tips</a>
+    <a href="../financial/index.html" class="prev-next-link">Understanding the Costs &rarr;</a>
+  </div>
+
+</div>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+
+<script src="../nav.js"></script>
+</body>
+</html>
