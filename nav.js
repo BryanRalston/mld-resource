@@ -56,6 +56,14 @@
       ]
     },
     {
+      folder: 'research', title: 'Science & Research', pages: [
+        { file: 'research/index.html', title: 'The Research Landscape', k: 'research overview pipeline gene therapy next generation emerging science AI drug discovery unmet needs timeline clinical trials preclinical' },
+        { file: 'research/next-gen-gene-therapy.html', title: 'Next-Gen Gene Therapy', k: 'CHOP EA1 vector AAV GMU01 Sanofi AAV-PHP.eB Paris Brain Institute lentiviral cisterna magna IV injection next generation improved ARSA cross-correction' },
+        { file: 'research/emerging-science.html', title: 'Emerging Science', k: 'substrate reduction therapy S202 CGT alpha-synuclein biomarkers NfL neurofilament NAA MRI remyelination oligodendrocyte peripheral neuropathy newborn screening RUSP' },
+        { file: 'research/ai-drug-development.html', title: 'AI & Drug Development', k: 'artificial intelligence AI machine learning drug discovery repurposing NEUBOrg enzyme engineering AlphaFold blood brain barrier digital twin rare disease orphan drug' }
+      ]
+    },
+    {
       folder: 'resources', title: 'Resources', pages: [
         { file: 'resources/index.html', title: 'Organizations & Support', k: 'organizations MLD Foundation Cure MLD United Leukodystrophy Foundation Hunter Hope NORD support groups family network ambassador' },
         { file: 'resources/newborn-screening.html', title: 'Newborn Screening', k: 'newborn screening RUSP recommended uniform screening panel state New York Illinois Maryland Minnesota Pennsylvania Utah dried blood spot' },
@@ -67,7 +75,7 @@
 
   // ===== RESOLVE ROOT =====
   var path = window.location.pathname;
-  var isRoot = /\/(index\.html)?$/.test(path) && !/\/(basics|treatment|care|family|financial|resources)\//.test(path);
+  var isRoot = /\/(index\.html)?$/.test(path) && !/\/(basics|treatment|care|family|financial|research|resources)\//.test(path);
   var ROOT = isRoot ? './' : '../';
 
   // ===== BUILD SIDEBAR =====
@@ -77,7 +85,7 @@
     SITE.forEach(function(section) {
       var isInFolder = path.indexOf('/' + section.folder + '/') !== -1;
       html += '<div class="sidebar-folder' + (isInFolder ? '' : ' collapsed') + '">';
-      html += '<div class="sidebar-folder-header"><span class="folder-arrow">&#9660;</span>' + section.title + '</div>';
+      html += '<div class="sidebar-folder-header" tabindex="0" role="button" aria-expanded="' + (isInFolder ? 'true' : 'false') + '"><span class="folder-arrow">&#9660;</span>' + section.title + '</div>';
       html += '<div class="sidebar-folder-pages">';
       section.pages.forEach(function(p) {
         var href = ROOT + p.file;
@@ -88,10 +96,16 @@
     });
     sidebar.innerHTML = html;
 
-    // Folder toggle
+    // Folder toggle (click + keyboard)
     sidebar.querySelectorAll('.sidebar-folder-header').forEach(function(hdr) {
-      hdr.addEventListener('click', function() {
-        hdr.parentElement.classList.toggle('collapsed');
+      function toggle() {
+        var folder = hdr.parentElement;
+        folder.classList.toggle('collapsed');
+        hdr.setAttribute('aria-expanded', !folder.classList.contains('collapsed'));
+      }
+      hdr.addEventListener('click', toggle);
+      hdr.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
       });
     });
   }
@@ -130,6 +144,12 @@
     sidebar && sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
   });
   if (overlay) overlay.addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
+      closeSidebar();
+      if (hamburger) hamburger.focus();
+    }
+  });
 
   // ===== BACK TO TOP =====
   var btt = document.getElementById('backToTop');
@@ -232,8 +252,17 @@
 
   // ===== COLLAPSIBLE SECTIONS =====
   document.querySelectorAll('.section-header').forEach(function(hdr) {
-    hdr.addEventListener('click', function() {
-      hdr.parentElement.classList.toggle('collapsed');
+    hdr.setAttribute('tabindex', '0');
+    hdr.setAttribute('role', 'button');
+    hdr.setAttribute('aria-expanded', 'true');
+    function toggleSection() {
+      var section = hdr.parentElement;
+      section.classList.toggle('collapsed');
+      hdr.setAttribute('aria-expanded', !section.classList.contains('collapsed'));
+    }
+    hdr.addEventListener('click', toggleSection);
+    hdr.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSection(); }
     });
   });
 

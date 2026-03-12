@@ -64,7 +64,7 @@ body {
   font-size: 1.1rem; font-weight: 700; color: var(--sky-700);
   white-space: nowrap; margin-right: 20px;
 }
-.header-title span { color: var(--warm-400); font-weight: 400; }
+.header-title span { color: var(--warm-600); font-weight: 400; }
 .search-wrapper {
   flex: 1; max-width: 480px; position: relative;
 }
@@ -85,7 +85,7 @@ body {
   color: var(--warm-400); pointer-events: none;
 }
 .search-count {
-  font-size: 0.8rem; color: var(--warm-500); margin-left: 12px; white-space: nowrap;
+  font-size: 0.8rem; color: var(--warm-600); margin-left: 12px; white-space: nowrap;
 }
 .header-actions {
   margin-left: auto; display: flex; gap: 8px; align-items: center;
@@ -122,14 +122,14 @@ body {
 }
 .sidebar-title {
   padding: 0 20px 12px; font-size: 0.75rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.05em; color: var(--warm-400);
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--warm-600);
 }
 .sidebar a {
   display: block; padding: 8px 20px; font-size: 0.87rem;
-  color: var(--warm-500); text-decoration: none; border-left: 3px solid transparent;
+  color: var(--warm-600); text-decoration: none; border-left: 3px solid transparent;
   transition: all 0.3s; line-height: 1.5;
 }
-.sidebar a:hover { color: var(--sky-600); background: var(--sky-50); }
+.sidebar a:hover, .sidebar a:focus-visible { color: var(--sky-600); background: var(--sky-50); }
 .sidebar a.active {
   color: var(--sky-700); font-weight: 600;
   border-left-color: var(--sky-500); background: var(--sky-50);
@@ -151,7 +151,7 @@ body {
   background: var(--warm-100); border: 1px solid var(--warm-200);
   border-left: none; border-radius: 16px;
   padding: 18px 24px; margin-bottom: 36px; font-size: 0.9rem;
-  line-height: 1.7; color: var(--warm-500);
+  line-height: 1.7; color: var(--warm-600);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 .disclaimer strong { color: var(--warm-600); }
@@ -195,7 +195,7 @@ body {
   display: block; line-height: 1.2;
 }
 .hope-banner .stat-label {
-  font-size: 0.8rem; color: var(--warm-500); margin-top: 4px;
+  font-size: 0.8rem; color: var(--warm-600); margin-top: 4px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -278,7 +278,7 @@ a:hover { text-decoration: underline; }
 blockquote {
   border-left: 3px solid var(--sky-200); background: var(--sky-50);
   padding: 16px 20px; margin: 18px 0; border-radius: 0 12px 12px 0;
-  font-style: italic; color: var(--warm-500);
+  font-style: italic; color: var(--warm-600);
 }
 
 /* ===== TABLES ===== */
@@ -335,13 +335,46 @@ mark.search-highlight {
 /* ===== FOOTER ===== */
 .site-footer {
   margin-top: 48px; padding: 24px 0; border-top: 1px solid var(--warm-200);
-  font-size: 0.85rem; color: var(--warm-500); text-align: center; line-height: 1.6;
+  font-size: 0.85rem; color: var(--warm-600); text-align: center; line-height: 1.6;
+}
+
+/* ===== SKIP NAV (Accessibility) ===== */
+.skip-nav {
+  position: absolute; top: -100%; left: 16px; z-index: 200;
+  padding: 8px 16px; background: var(--sky-600); color: white;
+  border-radius: 0 0 8px 8px; font-size: 0.9rem; font-weight: 600;
+  text-decoration: none; transition: top 0.2s;
+}
+.skip-nav:focus { top: 0; }
+
+/* ===== FOCUS STYLES (Accessibility) ===== */
+*:focus-visible {
+  outline: 2px solid var(--sky-500);
+  outline-offset: 2px;
+}
+.section-header:focus-visible {
+  outline: 2px solid var(--sky-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.sidebar .sidebar-folder-header:focus-visible {
+  outline: 2px solid var(--sky-500);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+.folder-card:focus-visible {
+  outline: 2px solid var(--sky-500);
+  outline-offset: 2px;
+}
+.prev-next-link:focus-visible {
+  outline: 2px solid var(--sky-500);
+  outline-offset: 2px;
 }
 
 /* ===== PRINT STYLES ===== */
 @media print {
   .site-header, .sidebar, .sidebar-overlay, .back-to-top, .hamburger,
-  .quick-ref, .header-actions, .search-wrapper { display: none !important; }
+  .quick-ref, .header-actions, .search-wrapper, .skip-nav { display: none !important; }
   .main { margin: 0; padding: 16px; max-width: 100%; }
   .doc-section.collapsed .section-body { display: block !important; }
   body { font-size: 11pt; line-height: 1.5; color: #000; background: #fff; }
