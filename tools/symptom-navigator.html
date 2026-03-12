@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symptom Navigator - MLD Family Resource</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+/* ===== SYMPTOM NAVIGATOR STYLES ===== */
+
+/* Profile form */
+.profile-section {
+  background: var(--sky-50);
+  border: 1px solid var(--sky-200);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.profile-section h3 {
+  margin-top: 0;
+  color: var(--sky-700);
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--warm-700);
+}
+.form-group input[type="number"],
+.form-group input[type="text"],
+.form-group select {
+  padding: 8px 12px;
+  border: 1.5px solid var(--warm-300);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--sky-400);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+.radio-group, .checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.radio-group label, .checkbox-group label {
+  font-weight: 400;
+  font-size: 0.93rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.checkbox-group {
+  flex-direction: column;
+  gap: 8px;
+}
+.checkbox-group label {
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.checkbox-group label:hover {
+  background: rgba(59,130,246,0.06);
+}
+
+/* Symptom sections */
+.symptom-section {
+  border: 1px solid var(--warm-200);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: white;
+}
+.symptom-section.critical {
+  border-color: var(--rose-500);
+  border-width: 2px;
+}
+.symptom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--warm-50);
+  border-bottom: 1px solid transparent;
+  transition: background 0.15s;
+}
+.symptom-header:hover {
+  background: var(--warm-100);
+}
+.symptom-section.critical .symptom-header {
+  background: var(--rose-50);
+  color: var(--rose-700);
+}
+.symptom-header .arrow {
+  font-size: 0.8rem;
+  transition: transform 0.2s;
+  color: var(--warm-400);
+}
+.symptom-section.open .symptom-header {
+  border-bottom-color: var(--warm-200);
+}
+.symptom-section.open .symptom-header .arrow {
+  transform: rotate(180deg);
+}
+.symptom-header .checked-count {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--sky-500);
+  background: var(--sky-50);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: 12px;
+  display: none;
+}
+.symptom-header .checked-count.visible {
+  display: inline;
+}
+.symptom-body {
+  display: none;
+  padding: 12px 18px 18px;
+}
+.symptom-section.open .symptom-body {
+  display: block;
+}
+.symptom-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--warm-100);
+}
+.symptom-item:last-child {
+  border-bottom: none;
+}
+.symptom-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.symptom-item label input[type="checkbox"] {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--sky-500);
+}
+.symptom-item .warning-icon {
+  color: var(--rose-500);
+  font-weight: 700;
+}
+.severity-select {
+  margin-left: 28px;
+  margin-top: 8px;
+  display: none;
+}
+.severity-select.visible {
+  display: block;
+}
+.severity-select select {
+  padding: 6px 10px;
+  border: 1.5px solid var(--warm-300);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  background: white;
+}
+.severity-label {
+  font-size: 0.82rem;
+  color: var(--warm-500);
+  margin-right: 8px;
+}
+
+/* Get Results button */
+.get-results-wrapper {
+  text-align: center;
+  margin: 32px 0;
+}
+.btn-get-results {
+  display: inline-block;
+  padding: 14px 40px;
+  background: var(--sky-600);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-get-results:hover {
+  background: var(--sky-700);
+  transform: translateY(-1px);
+}
+.btn-get-results:active {
+  transform: translateY(0);
+}
+
+/* Results panel */
+#resultsPanel {
+  display: none;
+  margin-top: 32px;
+}
+#resultsPanel.visible {
+  display: block;
+}
+
+/* Alert cards */
+.alert-card {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.alert-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.alert-emergency {
+  background: var(--rose-50);
+  border: 2px solid var(--rose-500);
+  color: var(--rose-700);
+}
+.alert-urgent {
+  background: var(--honey-50);
+  border: 2px solid var(--honey-400);
+  color: var(--warm-800);
+}
+.alert-info {
+  background: var(--sky-50);
+  border: 2px solid var(--sky-400);
+  color: var(--warm-800);
+}
+
+/* Recommendation cards */
+.results-section {
+  margin-bottom: 32px;
+}
+.results-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--warm-200);
+}
+.rec-card {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.15s;
+}
+.rec-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.rec-card h4 {
+  font-size: 0.95rem;
+  color: var(--sky-700);
+  margin-bottom: 6px;
+}
+.rec-card p {
+  font-size: 0.9rem;
+  color: var(--warm-600);
+  margin-bottom: 8px;
+}
+.rec-card a {
+  font-size: 0.88rem;
+  color: var(--sky-600);
+  text-decoration: none;
+  font-weight: 600;
+}
+.rec-card a:hover {
+  text-decoration: underline;
+}
+.rec-card .relevance-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  background: var(--sky-50);
+  color: var(--sky-600);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+}
+
+/* Specialist gap */
+.gap-item {
+  padding: 12px 16px;
+  background: var(--honey-50);
+  border-left: 4px solid var(--honey-400);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 10px;
+  font-size: 0.93rem;
+}
+.gap-item a {
+  color: var(--sky-600);
+  font-weight: 600;
+  text-decoration: none;
+}
+.gap-item a:hover { text-decoration: underline; }
+
+/* Test recommendations */
+.test-item {
+  padding: 12px 16px;
+  background: var(--earth-50);
+  border-left: 4px solid var(--earth-500);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 10px;
+  font-size: 0.93rem;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.btn-action {
+  padding: 10px 20px;
+  border: 2px solid var(--sky-500);
+  background: white;
+  color: var(--sky-600);
+  border-radius: 8px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-action:hover {
+  background: var(--sky-600);
+  color: white;
+}
+
+/* No symptoms message */
+.no-symptoms-msg {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--warm-500);
+  font-size: 1rem;
+}
+
+/* Print styles */
+@media print {
+  .site-header, .sidebar, .sidebar-overlay, .hamburger,
+  .search-wrapper, .search-count, .breadcrumb, .prev-next,
+  .back-to-top, .btn-get-results, .get-results-wrapper,
+  .action-buttons, .symptom-section, .profile-section,
+  .callout, .skip-nav { display: none !important; }
+  #resultsPanel { display: block !important; }
+  #printSummary { display: block !important; }
+  .main { margin: 0 !important; padding: 0 !important; }
+  .content { max-width: 100% !important; }
+  body { background: white; color: black; font-size: 11pt; }
+  .alert-card { break-inside: avoid; }
+  .rec-card { break-inside: avoid; }
+  h1 { font-size: 16pt; }
+  h3 { font-size: 13pt; }
+  a { color: var(--sky-700); }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .profile-section { padding: 16px; }
+  .form-row { flex-direction: column; gap: 12px; }
+  .symptom-header { padding: 12px 14px; font-size: 0.95rem; }
+  .symptom-body { padding: 10px 14px 14px; }
+  .btn-get-results { width: 100%; padding: 16px; }
+  .action-buttons { flex-direction: column; }
+  .btn-action { width: 100%; text-align: center; }
+}
+
+/* Tutorial toggle */
+.tutorial-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid var(--earth-500);
+  border-radius: 8px;
+  background: var(--earth-50);
+  color: var(--earth-700);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+.tutorial-toggle:hover {
+  background: var(--earth-100);
+  border-color: var(--earth-600);
+}
+.tutorial-content {
+  display: none;
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+.tutorial-content.visible { display: block; }
+.tutorial-content h4 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: var(--earth-700);
+}
+.tutorial-content ol {
+  padding-left: 20px;
+  margin: 0 0 12px 0;
+}
+.tutorial-content li {
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  color: var(--warm-700);
+}
+.tutorial-content .tutorial-tip {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--sky-50);
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: var(--sky-700);
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-nav">Skip to main content</a>
+
+<header class="site-header">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">&#9776;</button>
+  <a href="../" class="header-title">MLD <span>Family Resource</span></a>
+  <div class="search-wrapper">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Search this page..." aria-label="Search">
+  </div>
+  <span class="search-count" id="searchCount"></span>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<nav class="sidebar" id="sidebar"></nav>
+
+<main id="main-content" class="main">
+<div class="content">
+
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+
+  <div class="page-header">
+    <h1>Symptom Navigator</h1>
+  </div>
+
+  <div class="page-body">
+
+    <div class="callout callout-info">
+      <strong>What is this tool?</strong><br>
+      This guided assessment helps you identify what your child is experiencing, flags symptoms that need urgent attention, and directs you to the specific pages on this site that address your concerns. Check the symptoms you are observing, then click <strong>Get My Results</strong> for personalized recommendations. All processing happens in your browser &mdash; nothing is stored or sent anywhere.
+    </div>
+
+    <button class="tutorial-toggle" onclick="var c=this.nextElementSibling;c.classList.toggle('visible');this.textContent=c.classList.contains('visible')?'Hide Quick Guide':'Show Quick Guide'">Show Quick Guide</button>
+    <div class="tutorial-content">
+      <h4>How to Use This Tool (30-second guide)</h4>
+      <ol>
+        <li><strong>Fill in your child's profile:</strong> Age, MLD type, diagnosis status, and treatment status. This helps personalize the results.</li>
+        <li><strong>Check symptoms:</strong> Open each category (Motor, Neurological, Feeding, etc.) and check everything your child experiences &mdash; current or historical. A severity selector appears for each.</li>
+        <li><strong>Click "Get My Results":</strong> The tool generates red-flag alerts (what needs attention now), recommended reading pages, specialist gap analysis, and suggested tests.</li>
+        <li><strong>Save or print results:</strong> Use the Copy, Download, or Print buttons at the bottom of your results to share with your doctor.</li>
+        <li><strong>Come back anytime:</strong> Nothing is saved &mdash; you can re-run this whenever symptoms change. It takes about 5 minutes.</li>
+      </ol>
+      <div class="tutorial-tip">
+        <strong>Tip:</strong> This tool does not store any data. Form state is lost on page refresh by design &mdash; your privacy is protected.
+      </div>
+    </div>
+
+    <!-- ===== SECTION 1: PATIENT PROFILE ===== -->
+    <div class="profile-section" id="profileSection">
+      <h3>Patient Profile</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="patientAge">Age</label>
+          <input type="number" id="patientAge" min="0" max="99" placeholder="e.g. 2" style="width:80px;">
+        </div>
+        <div class="form-group">
+          <label for="ageUnit">Unit</label>
+          <select id="ageUnit">
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>MLD Type</label>
+        <div class="radio-group">
+          <label><input type="radio" name="mldType" value="late-infantile"> Late Infantile</label>
+          <label><input type="radio" name="mldType" value="juvenile"> Juvenile</label>
+          <label><input type="radio" name="mldType" value="adult"> Adult</label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Diagnosis Status</label>
+        <div class="radio-group">
+          <label><input type="radio" name="diagnosisStatus" value="confirmed"> Confirmed</label>
+          <label><input type="radio" name="diagnosisStatus" value="suspected"> Suspected</label>
+          <label><input type="radio" name="diagnosisStatus" value="sibling-screening"> Sibling screening</label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>Treatment Status</label>
+        <div class="radio-group" style="flex-direction:column;gap:8px;">
+          <label><input type="radio" name="treatmentStatus" value="pre-treatment"> Pre-treatment</label>
+          <label><input type="radio" name="treatmentStatus" value="post-lenmeldy"> Post-Lenmeldy (gene therapy)</label>
+          <label><input type="radio" name="treatmentStatus" value="post-hsct"> Post-HSCT (stem cell transplant)</label>
+          <label><input type="radio" name="treatmentStatus" value="no-treatment"> No treatment / supportive care only</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Current Specialists (check all that apply)</label>
+        <div class="checkbox-group" id="specialistsGroup">
+          <label><input type="checkbox" value="neurologist"> Pediatric Neurologist</label>
+          <label><input type="checkbox" value="metabolic-genetics"> Metabolic/Genetics Specialist</label>
+          <label><input type="checkbox" value="ophthalmologist"> Ophthalmologist</label>
+          <label><input type="checkbox" value="audiologist"> Audiologist</label>
+          <label><input type="checkbox" value="gi-feeding"> GI / Feeding Specialist</label>
+          <label><input type="checkbox" value="pulmonologist"> Pulmonologist</label>
+          <label><input type="checkbox" value="pain-medicine"> Pain Medicine</label>
+          <label><input type="checkbox" value="pt-ot-speech"> PT / OT / Speech Therapist</label>
+          <label><input type="checkbox" value="psychiatry-psychology"> Psychiatry / Psychology</label>
+          <label><input type="checkbox" value="palliative-care"> Palliative Care</label>
+          <label><input type="checkbox" value="none"> None yet</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2: SYMPTOM CHECKLIST ===== -->
+    <h2 style="margin-bottom:16px;">Symptom Checklist</h2>
+    <p style="margin-bottom:16px;color:var(--warm-600);font-size:0.93rem;">Check every symptom your child is currently experiencing or has a history of. A severity selector will appear for each checked symptom. Click a section header to expand or collapse it.</p>
+
+    <div id="symptomChecklist">
+
+      <!-- 1. Motor & Movement -->
+      <div class="symptom-section open" data-system="motor">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Motor &amp; Movement</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="difficulty-walking"> Difficulty walking</label>
+            <div class="severity-select" data-for="difficulty-walking"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="frequent-falls"> Frequent falls</label>
+            <div class="severity-select" data-for="frequent-falls"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="toe-walking"> Toe walking</label>
+            <div class="severity-select" data-for="toe-walking"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="spasticity"> Muscle stiffness / spasticity</label>
+            <div class="severity-select" data-for="spasticity"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="muscle-weakness"> Muscle weakness</label>
+            <div class="severity-select" data-for="muscle-weakness"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="skill-loss-motor"> Loss of previously acquired motor skills</label>
+            <div class="severity-select" data-for="skill-loss-motor"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="tremors"> Tremors</label>
+            <div class="severity-select" data-for="tremors"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="fine-motor"> Difficulty with fine motor tasks (grasping, drawing)</label>
+            <div class="severity-select" data-for="fine-motor"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Neurological -->
+      <div class="symptom-section" data-system="neuro">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Neurological</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="seizures"> Seizures</label>
+            <div class="severity-select" data-for="seizures"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="nystagmus"> Abnormal eye movements (nystagmus)</label>
+            <div class="severity-select" data-for="nystagmus"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="decreased-responsiveness"> Decreased responsiveness</label>
+            <div class="severity-select" data-for="decreased-responsiveness"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="developmental-regression"> Regression in developmental milestones</label>
+            <div class="severity-select" data-for="developmental-regression"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="headaches"> Headaches</label>
+            <div class="severity-select" data-for="headaches"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="dystonia"> Involuntary muscle contractions (dystonia)</label>
+            <div class="severity-select" data-for="dystonia"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Communication & Cognition -->
+      <div class="symptom-section" data-system="communication">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Communication &amp; Cognition</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="speech-regression"> Speech regression or loss</label>
+            <div class="severity-select" data-for="speech-regression"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="language-comprehension"> Difficulty understanding language</label>
+            <div class="severity-select" data-for="language-comprehension"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="behavioral-changes"> Behavioral changes (aggression, withdrawal)</label>
+            <div class="severity-select" data-for="behavioral-changes"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="memory-decline"> Memory decline</label>
+            <div class="severity-select" data-for="memory-decline"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="loss-learned-skills"> Loss of previously learned skills</label>
+            <div class="severity-select" data-for="loss-learned-skills"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="difficulty-concentrating"> Difficulty concentrating</label>
+            <div class="severity-select" data-for="difficulty-concentrating"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Feeding & GI -->
+      <div class="symptom-section" data-system="feeding">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Feeding &amp; GI</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="dysphagia"> Swallowing difficulty (dysphagia)</label>
+            <div class="severity-select" data-for="dysphagia"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="choking"> Choking episodes</label>
+            <div class="severity-select" data-for="choking"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="drooling"> Drooling</label>
+            <div class="severity-select" data-for="drooling"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="weight-loss"> Weight loss or poor weight gain</label>
+            <div class="severity-select" data-for="weight-loss"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="constipation"> Constipation</label>
+            <div class="severity-select" data-for="constipation"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="reflux-vomiting"> Reflux or vomiting</label>
+            <div class="severity-select" data-for="reflux-vomiting"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="gtube-complications"> G-tube complications</label>
+            <div class="severity-select" data-for="gtube-complications"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Pain & Comfort -->
+      <div class="symptom-section" data-system="pain">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Pain &amp; Comfort</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="neuropathic-pain"> Neuropathic pain (burning, tingling)</label>
+            <div class="severity-select" data-for="neuropathic-pain"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="muscle-pain"> Muscle pain or cramping</label>
+            <div class="severity-select" data-for="muscle-pain"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="abdominal-pain"> Abdominal pain</label>
+            <div class="severity-select" data-for="abdominal-pain"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="irritability-crying"> Irritability or inconsolable crying</label>
+            <div class="severity-select" data-for="irritability-crying"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="temperature-sensitivity"> Temperature sensitivity</label>
+            <div class="severity-select" data-for="temperature-sensitivity"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="skin-sensitivity"> Skin sensitivity (allodynia)</label>
+            <div class="severity-select" data-for="skin-sensitivity"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Vision & Hearing -->
+      <div class="symptom-section" data-system="vision-hearing">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Vision &amp; Hearing</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="vision-decline"> Vision changes or decline</label>
+            <div class="severity-select" data-for="vision-decline"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="light-sensitivity"> Sensitivity to light</label>
+            <div class="severity-select" data-for="light-sensitivity"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="hearing-loss"> Hearing loss</label>
+            <div class="severity-select" data-for="hearing-loss"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="abnormal-eye-tracking"> Abnormal eye tracking</label>
+            <div class="severity-select" data-for="abnormal-eye-tracking"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Respiratory -->
+      <div class="symptom-section" data-system="respiratory">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Respiratory</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="respiratory-infections"> Frequent respiratory infections</label>
+            <div class="severity-select" data-for="respiratory-infections"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="aspiration"> Aspiration events</label>
+            <div class="severity-select" data-for="aspiration"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="noisy-breathing"> Noisy breathing (stridor, wheezing)</label>
+            <div class="severity-select" data-for="noisy-breathing"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="sleep-apnea"> Sleep apnea</label>
+            <div class="severity-select" data-for="sleep-apnea"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="increased-secretions"> Increased secretions</label>
+            <div class="severity-select" data-for="increased-secretions"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Sleep & Behavior -->
+      <div class="symptom-section" data-system="sleep">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Sleep &amp; Behavior</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="sleep-disruption"> Sleep disruption</label>
+            <div class="severity-select" data-for="sleep-disruption"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="night-waking"> Night waking</label>
+            <div class="severity-select" data-for="night-waking"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="excessive-sleepiness"> Excessive sleepiness</label>
+            <div class="severity-select" data-for="excessive-sleepiness"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="agitation"> Agitation</label>
+            <div class="severity-select" data-for="agitation"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="anxiety"> Anxiety</label>
+            <div class="severity-select" data-for="anxiety"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="mood-swings"> Mood swings</label>
+            <div class="severity-select" data-for="mood-swings"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Autonomic -->
+      <div class="symptom-section" data-system="autonomic">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Autonomic</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="temperature-dysregulation"> Temperature dysregulation</label>
+            <div class="severity-select" data-for="temperature-dysregulation"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="excessive-sweating"> Excessive sweating</label>
+            <div class="severity-select" data-for="excessive-sweating"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="bp-instability"> Blood pressure instability</label>
+            <div class="severity-select" data-for="bp-instability"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="heart-rate-changes"> Heart rate changes</label>
+            <div class="severity-select" data-for="heart-rate-changes"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RED FLAG SYMPTOMS -->
+      <div class="symptom-section critical" data-system="red-flags">
+        <div class="symptom-header" onclick="toggleSection(this)">
+          <span>Red-Flag Symptoms &mdash; CRITICAL</span>
+          <span class="checked-count">0</span>
+          <span class="arrow">&#9660;</span>
+        </div>
+        <div class="symptom-body">
+          <div class="callout callout-warning" style="margin-bottom:12px;">
+            <strong>These symptoms require immediate medical attention.</strong> If your child is experiencing any of these right now, contact your care team or call 911.
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="status-epilepticus"> <span class="warning-icon">&#9888;</span> Status epilepticus / prolonged seizures (&gt;5 minutes)</label>
+            <div class="severity-select" data-for="status-epilepticus"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="aspiration-pneumonia"> <span class="warning-icon">&#9888;</span> Aspiration pneumonia signs (fever + cough + difficulty breathing)</label>
+            <div class="severity-select" data-for="aspiration-pneumonia"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="sudden-vision-loss"> <span class="warning-icon">&#9888;</span> Sudden vision loss</label>
+            <div class="severity-select" data-for="sudden-vision-loss"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="swallowing-loss"> <span class="warning-icon">&#9888;</span> Complete loss of swallowing</label>
+            <div class="severity-select" data-for="swallowing-loss"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="respiratory-distress"> <span class="warning-icon">&#9888;</span> Severe respiratory distress</label>
+            <div class="severity-select" data-for="respiratory-distress"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+          <div class="symptom-item">
+            <label><input type="checkbox" data-symptom="rapid-decline"> <span class="warning-icon">&#9888;</span> Rapid neurological decline (new symptoms in days, not weeks)</label>
+            <div class="severity-select" data-for="rapid-decline"><span class="severity-label">Severity:</span><select><option value="mild">Mild</option><option value="moderate">Moderate</option><option value="severe">Severe</option></select></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end symptomChecklist -->
+
+    <!-- Get Results Button -->
+    <div class="get-results-wrapper">
+      <button class="btn-get-results" onclick="generateResults()">Get My Results</button>
+    </div>
+
+    <!-- ===== SECTION 3: RESULTS PANEL ===== -->
+    <div id="resultsPanel">
+      <h2 style="margin-bottom:20px;">Your Personalized Results</h2>
+
+      <div id="alertsContainer"></div>
+      <div id="pagesContainer" class="results-section"></div>
+      <div id="specialistGapContainer" class="results-section"></div>
+      <div id="testingContainer" class="results-section"></div>
+
+      <!-- Print summary (shown only in print) -->
+      <div id="printSummary" style="display:none;"></div>
+
+      <div class="action-buttons">
+        <button class="btn-action" onclick="printSummary()">&#128424; Print My Summary</button>
+        <button class="btn-action" onclick="copySummary()">&#128203; Copy Summary</button>
+        <button class="btn-action" onclick="downloadSummary()">&#128190; Download Summary</button>
+      </div>
+    </div>
+
+  </div><!-- end page-body -->
+
+</div>
+</main>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+<script src="../nav.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== TOGGLE SECTIONS =====
+  window.toggleSection = function(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  };
+
+  // ===== SHOW/HIDE SEVERITY ON CHECK =====
+  document.getElementById('symptomChecklist').addEventListener('change', function(e) {
+    var cb = e.target;
+    if (!cb.dataset.symptom) return;
+    var sym = cb.dataset.symptom;
+    var item = cb.closest('.symptom-item');
+
+    // Severity select
+    var sev = item.querySelector('.severity-select[data-for="' + sym + '"]');
+    if (sev) sev.classList.toggle('visible', cb.checked);
+
+    // Update section checked count
+    updateSectionCounts();
+  });
+
+  function updateSectionCounts() {
+    var sections = document.querySelectorAll('.symptom-section');
+    for (var i = 0; i < sections.length; i++) {
+      var count = sections[i].querySelectorAll('input[data-symptom]:checked').length;
+      var badge = sections[i].querySelector('.checked-count');
+      if (badge) {
+        badge.textContent = count;
+        badge.classList.toggle('visible', count > 0);
+      }
+    }
+  }
+
+  // ===== SYMPTOM-TO-PAGE MAPPING =====
+  var PAGE_MAP = {
+    // Motor & Movement
+    'difficulty-walking': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Mobility support, equipment, and physical therapy approaches for MLD' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Tracking motor function over time' }
+    ],
+    'frequent-falls': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Fall prevention, adaptive equipment, and mobility support' }
+    ],
+    'toe-walking': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Toe walking can indicate spasticity or peripheral neuropathy' },
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Spasticity management approaches' }
+    ],
+    'spasticity': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Spasticity management including baclofen and other interventions' },
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Physical therapy for spasticity and contracture prevention' }
+    ],
+    'muscle-weakness': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Strengthening approaches and adaptive equipment' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Nerve conduction studies to assess peripheral nerve involvement' }
+    ],
+    'skill-loss-motor': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding progression patterns by MLD type' },
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Maintaining function and adapting to changes' },
+      { url: 'treatment/index.html', title: 'Treatment Overview', reason: 'Treatment options that may slow progression' }
+    ],
+    'tremors': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Managing tremors and involuntary movements' }
+    ],
+    'fine-motor': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Occupational therapy for fine motor difficulties' }
+    ],
+    // Neurological
+    'seizures': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Comprehensive seizure management in MLD including medication options' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'EEG monitoring and seizure tracking' }
+    ],
+    'nystagmus': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Ophthalmology evaluation for abnormal eye movements' }
+    ],
+    'decreased-responsiveness': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding disease progression and stages' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Comfort-focused care for advanced disease' }
+    ],
+    'developmental-regression': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding regression patterns by MLD type' },
+      { url: 'treatment/index.html', title: 'Treatment Overview', reason: 'Treatment timing is critical before significant regression' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Developmental assessments and MRI monitoring' }
+    ],
+    'headaches': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Pain management approaches' }
+    ],
+    'dystonia': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Managing dystonia and involuntary muscle contractions' },
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Positioning and therapy for dystonia' }
+    ],
+    // Communication & Cognition
+    'speech-regression': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Speech therapy and augmentative communication' },
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Speech regression patterns by MLD type' }
+    ],
+    'language-comprehension': [
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Speech-language pathology support' }
+    ],
+    'behavioral-changes': [
+      { url: 'family/emotional-support.html', title: 'Emotional & Mental Health', reason: 'Understanding behavioral changes and coping strategies' },
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Behavioral changes are common in juvenile and adult-onset MLD' }
+    ],
+    'memory-decline': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Cognitive decline patterns in MLD' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Neuropsychological testing and monitoring' }
+    ],
+    'loss-learned-skills': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding regression in MLD' },
+      { url: 'treatment/index.html', title: 'Treatment Overview', reason: 'Early treatment may preserve acquired skills' }
+    ],
+    'difficulty-concentrating': [
+      { url: 'family/emotional-support.html', title: 'Emotional & Mental Health', reason: 'Cognitive support strategies' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Neuropsychological assessment' }
+    ],
+    // Feeding & GI
+    'dysphagia': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Swallowing assessment, modified diets, and feeding strategies' },
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Video swallow study and feeding evaluations' }
+    ],
+    'choking': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Aspiration prevention and modified feeding techniques' }
+    ],
+    'drooling': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Drooling management approaches' }
+    ],
+    'weight-loss': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Nutritional support, caloric supplementation, and G-tube considerations' }
+    ],
+    'constipation': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'GI management including constipation treatment' }
+    ],
+    'reflux-vomiting': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Reflux management and positioning strategies' }
+    ],
+    'gtube-complications': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'G-tube care, troubleshooting, and complications' }
+    ],
+    // Pain & Comfort
+    'neuropathic-pain': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Neuropathic pain management including gabapentin, pregabalin, and non-pharmacologic approaches' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Comprehensive comfort and pain management' }
+    ],
+    'muscle-pain': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Muscle pain and spasticity management' },
+      { url: 'care/physical-therapy.html', title: 'Therapy & Mobility', reason: 'Physical therapy for pain management' }
+    ],
+    'abdominal-pain': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'GI assessment and management' },
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Pain management approaches' }
+    ],
+    'irritability-crying': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Pain assessment in non-verbal children and comfort measures' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Comfort-focused care approaches' }
+    ],
+    'temperature-sensitivity': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Temperature dysregulation and neuropathic pain' }
+    ],
+    'skin-sensitivity': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Allodynia management in peripheral neuropathy' }
+    ],
+    // Vision & Hearing
+    'vision-decline': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Ophthalmology screening and vision monitoring' }
+    ],
+    'light-sensitivity': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Ophthalmology evaluation' }
+    ],
+    'hearing-loss': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Audiology testing and hearing support' }
+    ],
+    'abnormal-eye-tracking': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Neurological and ophthalmologic assessment' }
+    ],
+    // Respiratory
+    'respiratory-infections': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Aspiration prevention to reduce respiratory infections' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Respiratory support and infection management' }
+    ],
+    'aspiration': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Aspiration prevention, swallow studies, and G-tube evaluation' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Respiratory support for aspiration risk' }
+    ],
+    'noisy-breathing': [
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Airway management and respiratory support' }
+    ],
+    'sleep-apnea': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Sleep study and respiratory monitoring' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Respiratory support options' }
+    ],
+    'increased-secretions': [
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Secretion management strategies' }
+    ],
+    // Sleep & Behavior
+    'sleep-disruption': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Pain-related sleep disruption management' },
+      { url: 'family/emotional-support.html', title: 'Emotional & Mental Health', reason: 'Sleep support for the whole family' }
+    ],
+    'night-waking': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Nocturnal pain and seizure management' }
+    ],
+    'excessive-sleepiness': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Neurological assessment for changes in alertness' },
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding progression patterns' }
+    ],
+    'agitation': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Pain assessment and agitation management' },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Comfort measures for agitation' }
+    ],
+    'anxiety': [
+      { url: 'family/emotional-support.html', title: 'Emotional & Mental Health', reason: 'Anxiety management and psychological support' }
+    ],
+    'mood-swings': [
+      { url: 'family/emotional-support.html', title: 'Emotional & Mental Health', reason: 'Behavioral and mood support strategies' },
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Mood changes in juvenile and adult-onset MLD' }
+    ],
+    // Autonomic
+    'temperature-dysregulation': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Temperature dysregulation in MLD' }
+    ],
+    'excessive-sweating': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Autonomic function monitoring' }
+    ],
+    'bp-instability': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Cardiovascular monitoring' }
+    ],
+    'heart-rate-changes': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Cardiovascular monitoring' }
+    ],
+    // Red flags
+    'status-epilepticus': [
+      { url: 'care/seizures-pain.html', title: 'Seizures & Pain Management', reason: 'Emergency seizure management and rescue medication protocols', urgent: true }
+    ],
+    'aspiration-pneumonia': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Aspiration prevention and G-tube consideration', urgent: true },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Respiratory crisis management', urgent: true }
+    ],
+    'sudden-vision-loss': [
+      { url: 'care/monitoring.html', title: 'Monitoring Schedule', reason: 'Emergency ophthalmology evaluation', urgent: true }
+    ],
+    'swallowing-loss': [
+      { url: 'care/feeding-nutrition.html', title: 'Feeding & Nutrition', reason: 'Emergency feeding assessment and G-tube placement', urgent: true }
+    ],
+    'respiratory-distress': [
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Respiratory crisis management and advanced directives', urgent: true }
+    ],
+    'rapid-decline': [
+      { url: 'basics/types.html', title: 'Types of MLD', reason: 'Understanding rapid progression patterns', urgent: true },
+      { url: 'treatment/index.html', title: 'Treatment Overview', reason: 'Urgent treatment evaluation if not yet treated', urgent: true },
+      { url: 'care/palliative-care.html', title: 'Palliative & Supportive Care', reason: 'Goals of care discussion', urgent: true }
+    ]
+  };
+
+  // ===== URGENCY ALERT RULES =====
+  function getAlerts(checked) {
+    var alerts = [];
+
+    // EMERGENCY: Status epilepticus
+    if (checked['status-epilepticus']) {
+      alerts.push({
+        level: 'emergency',
+        title: 'EMERGENCY: Prolonged Seizure / Status Epilepticus',
+        text: 'Seizures lasting more than 5 minutes are a medical emergency. Call 911 or your emergency number immediately. Administer rescue medication if prescribed. Do not wait.',
+        link: 'care/seizures-pain.html',
+        linkText: 'Read: Seizures & Pain Management'
+      });
+    }
+
+    // EMERGENCY: Aspiration pneumonia
+    if (checked['aspiration-pneumonia']) {
+      alerts.push({
+        level: 'emergency',
+        title: 'EMERGENCY: Possible Aspiration Pneumonia',
+        text: 'Fever combined with cough and breathing difficulty in a child with swallowing problems may indicate aspiration pneumonia. Seek emergency medical care immediately. This requires urgent antibiotic treatment and respiratory support.',
+        link: 'care/feeding-nutrition.html',
+        linkText: 'Read: Feeding & Nutrition'
+      });
+    }
+
+    // EMERGENCY: Respiratory distress
+    if (checked['respiratory-distress']) {
+      alerts.push({
+        level: 'emergency',
+        title: 'EMERGENCY: Severe Respiratory Distress',
+        text: 'Severe breathing difficulty requires immediate emergency care. Call 911. Look for signs: rapid breathing, chest retractions, bluish lips or fingertips, inability to speak or cry.',
+        link: 'care/palliative-care.html',
+        linkText: 'Read: Palliative & Supportive Care'
+      });
+    }
+
+    // EMERGENCY: Complete swallowing loss
+    if (checked['swallowing-loss']) {
+      alerts.push({
+        level: 'emergency',
+        title: 'EMERGENCY: Complete Loss of Swallowing',
+        text: 'Complete inability to swallow puts your child at immediate risk of aspiration and dehydration. Contact your care team today. IV fluids and emergency G-tube placement may be needed.',
+        link: 'care/feeding-nutrition.html',
+        linkText: 'Read: Feeding & Nutrition'
+      });
+    }
+
+    // EMERGENCY: Sudden vision loss
+    if (checked['sudden-vision-loss']) {
+      alerts.push({
+        level: 'emergency',
+        title: 'EMERGENCY: Sudden Vision Loss',
+        text: 'Sudden loss of vision requires immediate ophthalmologic and neurological evaluation. Go to the emergency department today.',
+        link: 'care/monitoring.html',
+        linkText: 'Read: Monitoring Schedule'
+      });
+    }
+
+    // URGENT: Rapid neurological decline
+    if (checked['rapid-decline']) {
+      alerts.push({
+        level: 'urgent',
+        title: 'URGENT: Rapid Neurological Decline',
+        text: 'New symptoms appearing over days rather than weeks may indicate an accelerated phase of disease progression, intercurrent illness, or a treatable complication. Contact your neurologist immediately for urgent evaluation.',
+        link: 'treatment/index.html',
+        linkText: 'Read: Treatment Overview'
+      });
+    }
+
+    // URGENT: Seizures + regression combination
+    if (checked['seizures'] && (checked['developmental-regression'] || checked['skill-loss-motor'] || checked['loss-learned-skills'])) {
+      alerts.push({
+        level: 'urgent',
+        title: 'URGENT: Seizures with Active Regression',
+        text: 'The combination of seizures with ongoing skill loss suggests active disease progression. If your child has not been treated, urgent evaluation for Lenmeldy gene therapy or HSCT is critical. Every week matters for treatment eligibility.',
+        link: 'treatment/index.html',
+        linkText: 'Read: Treatment Overview'
+      });
+    }
+
+    // URGENT: Dysphagia cluster
+    if (checked['dysphagia'] && (checked['choking'] || checked['aspiration'])) {
+      alerts.push({
+        level: 'urgent',
+        title: 'URGENT: Swallowing Danger Zone',
+        text: 'Swallowing difficulty combined with choking or aspiration events puts your child at high risk for aspiration pneumonia. Request an urgent video swallow study and discuss G-tube placement with your care team.',
+        link: 'care/feeding-nutrition.html',
+        linkText: 'Read: Feeding & Nutrition'
+      });
+    }
+
+    // INFO: Motor regression pattern
+    var motorRegression = 0;
+    ['difficulty-walking','frequent-falls','spasticity','muscle-weakness','skill-loss-motor'].forEach(function(s) {
+      if (checked[s]) motorRegression++;
+    });
+    if (motorRegression >= 3) {
+      alerts.push({
+        level: 'info',
+        title: 'Motor Regression Pattern Detected',
+        text: 'You checked ' + motorRegression + ' motor symptoms. This pattern suggests significant motor involvement. A comprehensive physical therapy and equipment assessment is recommended. If your child has not been treated, discuss treatment urgency with your team.',
+        link: 'care/physical-therapy.html',
+        linkText: 'Read: Therapy & Mobility'
+      });
+    }
+
+    // INFO: Pain cluster
+    var painCount = 0;
+    ['neuropathic-pain','muscle-pain','abdominal-pain','irritability-crying','temperature-sensitivity','skin-sensitivity'].forEach(function(s) {
+      if (checked[s]) painCount++;
+    });
+    if (painCount >= 3) {
+      alerts.push({
+        level: 'info',
+        title: 'Significant Pain Burden Detected',
+        text: 'You checked ' + painCount + ' pain-related symptoms. Neuropathic pain is common in MLD due to peripheral nerve demyelination. A comprehensive pain management plan involving a pain specialist and palliative care team can significantly improve quality of life.',
+        link: 'care/seizures-pain.html',
+        linkText: 'Read: Seizures & Pain Management'
+      });
+    }
+
+    // INFO: Autonomic cluster
+    var autoCount = 0;
+    ['temperature-dysregulation','excessive-sweating','bp-instability','heart-rate-changes'].forEach(function(s) {
+      if (checked[s]) autoCount++;
+    });
+    if (autoCount >= 2) {
+      alerts.push({
+        level: 'info',
+        title: 'Autonomic Symptom Cluster Detected',
+        text: 'You checked ' + autoCount + ' autonomic symptoms. Autonomic dysfunction is common in MLD due to peripheral and central nervous system involvement. Discuss these symptoms with your neurologist.',
+        link: 'care/monitoring.html',
+        linkText: 'Read: Monitoring Schedule'
+      });
+    }
+
+    // INFO: Communication + cognition cluster
+    var cogCount = 0;
+    ['speech-regression','language-comprehension','behavioral-changes','memory-decline','loss-learned-skills','difficulty-concentrating'].forEach(function(s) {
+      if (checked[s]) cogCount++;
+    });
+    if (cogCount >= 3) {
+      alerts.push({
+        level: 'info',
+        title: 'Cognitive & Communication Decline Pattern',
+        text: 'You checked ' + cogCount + ' communication/cognition symptoms. Consider augmentative and alternative communication (AAC) assessment and neuropsychological evaluation to identify preserved abilities and adapt support strategies.',
+        link: 'care/physical-therapy.html',
+        linkText: 'Read: Therapy & Mobility'
+      });
+    }
+
+    return alerts;
+  }
+
+  // ===== SPECIALIST GAP ANALYSIS =====
+  function getSpecialistGaps(checked, specialists) {
+    var gaps = [];
+    var hasMotor = ['difficulty-walking','frequent-falls','toe-walking','spasticity','muscle-weakness','skill-loss-motor','tremors','fine-motor'];
+    var hasNeuro = ['seizures','nystagmus','decreased-responsiveness','developmental-regression','headaches','dystonia'];
+    var hasCommunication = ['speech-regression','language-comprehension','behavioral-changes','memory-decline','loss-learned-skills','difficulty-concentrating'];
+    var hasFeeding = ['dysphagia','choking','drooling','weight-loss','constipation','reflux-vomiting','gtube-complications'];
+    var hasPain = ['neuropathic-pain','muscle-pain','abdominal-pain','irritability-crying','temperature-sensitivity','skin-sensitivity'];
+    var hasVision = ['vision-decline','light-sensitivity','abnormal-eye-tracking','nystagmus'];
+    var hasHearing = ['hearing-loss'];
+    var hasRespiratory = ['respiratory-infections','aspiration','noisy-breathing','sleep-apnea','increased-secretions'];
+    var hasBehavioral = ['behavioral-changes','anxiety','mood-swings','agitation'];
+
+    var anyMotor = hasMotor.some(function(s) { return checked[s]; });
+    var anyNeuro = hasNeuro.some(function(s) { return checked[s]; });
+    var anyCommunication = hasCommunication.some(function(s) { return checked[s]; });
+    var anyFeeding = hasFeeding.some(function(s) { return checked[s]; });
+    var anyPain = hasPain.some(function(s) { return checked[s]; });
+    var anyVision = hasVision.some(function(s) { return checked[s]; });
+    var anyHearing = hasHearing.some(function(s) { return checked[s]; });
+    var anyRespiratory = hasRespiratory.some(function(s) { return checked[s]; });
+    var anyBehavioral = hasBehavioral.some(function(s) { return checked[s]; });
+
+    if (!specialists['metabolic-genetics']) {
+      gaps.push('A <strong>metabolic/genetics specialist</strong> is essential for MLD management, treatment coordination, and sibling testing. This should be your first specialist referral.');
+    }
+    if ((anyMotor || anyNeuro) && !specialists['neurologist']) {
+      gaps.push('You reported motor or neurological symptoms but do not have a <strong>pediatric neurologist</strong>. A neurologist experienced with leukodystrophies is critical for seizure management, disease monitoring, and treatment decisions.');
+    }
+    if (anyVision && !specialists['ophthalmologist']) {
+      gaps.push('You reported vision symptoms but do not have an <strong>ophthalmologist</strong>. Regular ophthalmologic evaluation is important for monitoring visual function in MLD.');
+    }
+    if (anyHearing && !specialists['audiologist']) {
+      gaps.push('You reported hearing symptoms but do not have an <strong>audiologist</strong>. Hearing assessment is important to optimize communication.');
+    }
+    if (anyFeeding && !specialists['gi-feeding']) {
+      gaps.push('You reported feeding/GI symptoms but do not have a <strong>GI or feeding specialist</strong>. A feeding evaluation is critical for aspiration prevention and nutritional support.');
+    }
+    if (anyRespiratory && !specialists['pulmonologist']) {
+      gaps.push('You reported respiratory symptoms but do not have a <strong>pulmonologist</strong>. Pulmonary evaluation can help manage respiratory complications and secretions.');
+    }
+    if (anyPain && !specialists['pain-medicine']) {
+      gaps.push('You reported significant pain symptoms. Consider adding: <strong>pain medicine specialist</strong> experienced with neuropathic pain in children.');
+    }
+    if ((anyMotor || anyCommunication || anyFeeding) && !specialists['pt-ot-speech']) {
+      gaps.push('You reported motor, communication, or feeding symptoms. Consider adding: <strong>PT, OT, and/or speech therapy</strong> for mobility support, adaptive skills, and communication.');
+    }
+    if (anyBehavioral && !specialists['psychiatry-psychology']) {
+      gaps.push('You reported behavioral or mood symptoms. Consider adding: <strong>psychiatry or psychology</strong> experienced with chronic neurological conditions in children.');
+    }
+    if (anyPain && !specialists['palliative-care']) {
+      gaps.push('You reported pain symptoms. Consider adding: <strong>palliative care</strong> for comprehensive comfort management and quality-of-life support. Palliative care is appropriate at any stage alongside treatment.');
+    }
+
+    return gaps;
+  }
+
+  // ===== TESTING RECOMMENDATIONS =====
+  function getTestingRecs(checked) {
+    var tests = [];
+    var hasNeuro = ['seizures','nystagmus','decreased-responsiveness','developmental-regression','headaches','dystonia'];
+    var anyNeuro = hasNeuro.some(function(s) { return checked[s]; });
+    var hasMotor = ['difficulty-walking','frequent-falls','toe-walking','spasticity','muscle-weakness','skill-loss-motor','tremors','fine-motor'];
+    var anyMotor = hasMotor.some(function(s) { return checked[s]; });
+    var hasPain = ['neuropathic-pain','muscle-pain','temperature-sensitivity','skin-sensitivity'];
+    var anyPain = hasPain.some(function(s) { return checked[s]; });
+    var hasFeeding = ['dysphagia','choking','drooling','weight-loss'];
+    var anyFeeding = hasFeeding.some(function(s) { return checked[s]; });
+
+    if (anyNeuro || checked['developmental-regression']) {
+      tests.push('<strong>MRI brain</strong> (with spectroscopy if available) &mdash; to assess white matter disease extent and progression');
+    }
+    if (anyMotor || anyPain) {
+      tests.push('<strong>Nerve conduction study / EMG</strong> &mdash; to evaluate peripheral neuropathy severity and progression');
+    }
+    if (checked['seizures'] || checked['status-epilepticus']) {
+      tests.push('<strong>EEG (electroencephalogram)</strong> &mdash; to characterize seizure type and guide medication choices');
+    }
+    if (anyFeeding) {
+      tests.push('<strong>Video swallow study (VFSS)</strong> &mdash; to evaluate swallowing safety and aspiration risk');
+    }
+    if (checked['hearing-loss']) {
+      tests.push('<strong>Comprehensive audiology testing</strong> &mdash; ABR and audiometry to assess hearing function');
+    }
+    if (checked['vision-decline'] || checked['abnormal-eye-tracking'] || checked['sudden-vision-loss']) {
+      tests.push('<strong>Ophthalmology exam</strong> &mdash; visual evoked potentials (VEP) and comprehensive eye evaluation');
+    }
+    if (checked['respiratory-infections'] || checked['aspiration'] || checked['sleep-apnea'] || checked['noisy-breathing']) {
+      tests.push('<strong>Pulmonary function testing / sleep study</strong> &mdash; assess respiratory function and need for support');
+    }
+    if (checked['weight-loss'] || checked['dysphagia'] || checked['gtube-complications']) {
+      tests.push('<strong>Nutritional assessment</strong> &mdash; dietitian evaluation for caloric needs, micronutrient status, and feeding plan');
+    }
+
+    // General baseline if multiple symptoms
+    var totalChecked = Object.keys(checked).length;
+    if (totalChecked >= 3) {
+      tests.push('<strong>Baseline labs</strong> &mdash; CBC, metabolic panel, liver function (especially post-treatment), vitamin D, thyroid function');
+    }
+
+    return tests;
+  }
+
+  // ===== GENERATE RESULTS =====
+  window.generateResults = function() {
+    // Collect checked symptoms
+    var allCheckboxes = document.querySelectorAll('#symptomChecklist input[data-symptom]');
+    var checked = {};
+    var checkedList = [];
+    for (var i = 0; i < allCheckboxes.length; i++) {
+      if (allCheckboxes[i].checked) {
+        var sym = allCheckboxes[i].dataset.symptom;
+        checked[sym] = true;
+        var sevSelect = allCheckboxes[i].closest('.symptom-item').querySelector('.severity-select select');
+        var severity = sevSelect ? sevSelect.value : 'mild';
+        var label = allCheckboxes[i].closest('label').textContent.trim().replace(/^[\u26A0\uFE0F\s]+/, '');
+        checkedList.push({ id: sym, label: label, severity: severity });
+      }
+    }
+
+    if (checkedList.length === 0) {
+      alert('Please check at least one symptom before generating results.');
+      return;
+    }
+
+    // Collect specialists
+    var specChecks = document.querySelectorAll('#specialistsGroup input[type="checkbox"]');
+    var specialists = {};
+    for (var s = 0; s < specChecks.length; s++) {
+      if (specChecks[s].checked) specialists[specChecks[s].value] = true;
+    }
+
+    var panel = document.getElementById('resultsPanel');
+    panel.classList.add('visible');
+
+    // A. Urgency Alerts
+    var alerts = getAlerts(checked);
+    var alertsHTML = '';
+    for (var a = 0; a < alerts.length; a++) {
+      var al = alerts[a];
+      var cls = al.level === 'emergency' ? 'alert-emergency' : (al.level === 'urgent' ? 'alert-urgent' : 'alert-info');
+      alertsHTML += '<div class="alert-card ' + cls + '">';
+      alertsHTML += '<strong>' + al.title + '</strong>';
+      alertsHTML += '<p>' + al.text + '</p>';
+      if (al.link) {
+        alertsHTML += '<a href="../' + al.link + '">' + al.linkText + ' &rarr;</a>';
+      }
+      alertsHTML += '</div>';
+    }
+    document.getElementById('alertsContainer').innerHTML = alertsHTML;
+
+    // B. Recommended Pages
+    var pageScores = {};
+    for (var sym in checked) {
+      if (!PAGE_MAP[sym]) continue;
+      var pages = PAGE_MAP[sym];
+      for (var p = 0; p < pages.length; p++) {
+        var pg = pages[p];
+        var key = pg.url;
+        if (!pageScores[key]) {
+          pageScores[key] = { url: pg.url, title: pg.title, reasons: [], score: 0, urgent: false };
+        }
+        pageScores[key].reasons.push(pg.reason);
+        pageScores[key].score++;
+        if (pg.urgent) pageScores[key].urgent = true;
+      }
+    }
+
+    // Sort by score descending, urgent first
+    var sortedPages = Object.keys(pageScores).map(function(k) { return pageScores[k]; });
+    sortedPages.sort(function(a, b) {
+      if (a.urgent && !b.urgent) return -1;
+      if (!a.urgent && b.urgent) return 1;
+      return b.score - a.score;
+    });
+
+    var pagesHTML = '<h3>Recommended Pages for You</h3>';
+    if (sortedPages.length === 0) {
+      pagesHTML += '<p>No specific page recommendations based on current selections.</p>';
+    } else {
+      for (var r = 0; r < sortedPages.length; r++) {
+        var rec = sortedPages[r];
+        pagesHTML += '<div class="rec-card">';
+        pagesHTML += '<h4>' + (rec.urgent ? '&#9888; ' : '') + rec.title + '</h4>';
+        // Deduplicate reasons
+        var uniqueReasons = [];
+        for (var ri = 0; ri < rec.reasons.length; ri++) {
+          if (uniqueReasons.indexOf(rec.reasons[ri]) === -1) uniqueReasons.push(rec.reasons[ri]);
+        }
+        pagesHTML += '<p>' + uniqueReasons.join('. ') + '.</p>';
+        pagesHTML += '<span class="relevance-tag">Matched ' + rec.score + ' symptom' + (rec.score > 1 ? 's' : '') + '</span>';
+        pagesHTML += ' <a href="../' + rec.url + '">Read this page &rarr;</a>';
+        pagesHTML += '</div>';
+      }
+    }
+    document.getElementById('pagesContainer').innerHTML = pagesHTML;
+
+    // C. Specialist Gap Analysis
+    var gaps = getSpecialistGaps(checked, specialists);
+    var gapHTML = '<h3>Specialist Gap Analysis</h3>';
+    if (gaps.length === 0) {
+      gapHTML += '<p style="color:var(--earth-600);font-weight:600;">Your specialist team appears to cover your reported symptoms well. Continue regular follow-up.</p>';
+    } else {
+      for (var g = 0; g < gaps.length; g++) {
+        gapHTML += '<div class="gap-item">' + gaps[g] + '</div>';
+      }
+      gapHTML += '<p style="margin-top:12px;"><a href="../care/index.html">See care team overview &rarr;</a></p>';
+    }
+    document.getElementById('specialistGapContainer').innerHTML = gapHTML;
+
+    // D. Testing Recommendations
+    var tests = getTestingRecs(checked);
+    var testHTML = '<h3>Suggested Tests</h3>';
+    if (tests.length === 0) {
+      testHTML += '<p>No specific test recommendations based on current selections.</p>';
+    } else {
+      for (var t = 0; t < tests.length; t++) {
+        testHTML += '<div class="test-item">' + tests[t] + '</div>';
+      }
+    }
+    document.getElementById('testingContainer').innerHTML = testHTML;
+
+    // Build text summary for print/copy/download
+    buildTextSummary(checkedList, alerts, sortedPages, gaps, tests);
+
+    // Scroll to results
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ===== TEXT SUMMARY BUILDER =====
+  var _textSummary = '';
+
+  function buildTextSummary(checkedList, alerts, pages, gaps, tests) {
+    var age = document.getElementById('patientAge').value || 'Not specified';
+    var ageUnit = document.getElementById('ageUnit').value || 'months';
+
+    var mldTypeEls = document.querySelectorAll('input[name="mldType"]');
+    var mldType = 'Not specified';
+    for (var i = 0; i < mldTypeEls.length; i++) {
+      if (mldTypeEls[i].checked) { mldType = mldTypeEls[i].parentElement.textContent.trim(); break; }
+    }
+
+    var diagStatusEls = document.querySelectorAll('input[name="diagnosisStatus"]');
+    var diagStatus = 'Not specified';
+    for (var d = 0; d < diagStatusEls.length; d++) {
+      if (diagStatusEls[d].checked) { diagStatus = diagStatusEls[d].parentElement.textContent.trim(); break; }
+    }
+
+    var treatStatusEls = document.querySelectorAll('input[name="treatmentStatus"]');
+    var treatStatus = 'Not specified';
+    for (var tr = 0; tr < treatStatusEls.length; tr++) {
+      if (treatStatusEls[tr].checked) { treatStatus = treatStatusEls[tr].parentElement.textContent.trim(); break; }
+    }
+
+    var specChecks = document.querySelectorAll('#specialistsGroup input[type="checkbox"]:checked');
+    var specs = [];
+    for (var s = 0; s < specChecks.length; s++) {
+      specs.push(specChecks[s].parentElement.textContent.trim());
+    }
+
+    var lines = [];
+    lines.push('MLD FAMILY RESOURCE - SYMPTOM NAVIGATOR SUMMARY');
+    lines.push('Generated: ' + new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }));
+    lines.push('');
+    lines.push('=== PATIENT PROFILE ===');
+    lines.push('Age: ' + (age !== 'Not specified' ? age + ' ' + ageUnit : 'Not specified'));
+    lines.push('MLD Type: ' + mldType);
+    lines.push('Diagnosis Status: ' + diagStatus);
+    lines.push('Treatment Status: ' + treatStatus);
+    lines.push('Current specialists: ' + (specs.length ? specs.join(', ') : 'None'));
+    lines.push('');
+    lines.push('=== SYMPTOMS REPORTED ===');
+
+    // Group by system
+    var sections = document.querySelectorAll('.symptom-section');
+    for (var sec = 0; sec < sections.length; sec++) {
+      var sectionName = sections[sec].querySelector('.symptom-header span:first-child').textContent;
+      var sectionSymptoms = [];
+      var cbs = sections[sec].querySelectorAll('input[data-symptom]:checked');
+      for (var c = 0; c < cbs.length; c++) {
+        var lbl = cbs[c].closest('label').textContent.trim().replace(/^[\u26A0\uFE0F\s]+/, '');
+        var sev = cbs[c].closest('.symptom-item').querySelector('.severity-select select');
+        sectionSymptoms.push('  - ' + lbl + (sev ? ' (' + sev.value + ')' : ''));
+      }
+      if (sectionSymptoms.length) {
+        lines.push(sectionName + ':');
+        lines = lines.concat(sectionSymptoms);
+      }
+    }
+
+    if (alerts.length) {
+      lines.push('');
+      lines.push('=== URGENCY ALERTS ===');
+      for (var a = 0; a < alerts.length; a++) {
+        lines.push('[' + alerts[a].level.toUpperCase() + '] ' + alerts[a].title);
+        lines.push('  ' + alerts[a].text.replace(/<[^>]+>/g, ''));
+      }
+    }
+
+    if (pages.length) {
+      lines.push('');
+      lines.push('=== RECOMMENDED READING ===');
+      for (var p = 0; p < pages.length; p++) {
+        lines.push('- ' + pages[p].title + ' (matched ' + pages[p].score + ' symptom' + (pages[p].score > 1 ? 's' : '') + ')');
+      }
+    }
+
+    if (gaps.length) {
+      lines.push('');
+      lines.push('=== SPECIALIST GAPS ===');
+      for (var g = 0; g < gaps.length; g++) {
+        lines.push('- ' + gaps[g].replace(/<[^>]+>/g, ''));
+      }
+    }
+
+    if (tests.length) {
+      lines.push('');
+      lines.push('=== SUGGESTED TESTS ===');
+      for (var t = 0; t < tests.length; t++) {
+        lines.push('- ' + tests[t].replace(/<[^>]+>/g, ''));
+      }
+    }
+
+    lines.push('');
+    lines.push('---');
+    lines.push('Source: MLD Family Resource');
+    lines.push('This is an informational tool, not medical advice. Always consult qualified healthcare professionals.');
+
+    _textSummary = lines.join('\n');
+
+    // Also build print HTML
+    var printDiv = document.getElementById('printSummary');
+    printDiv.innerHTML = '<pre style="white-space:pre-wrap;font-family:inherit;font-size:11pt;line-height:1.6;">' + escapeHTML(_textSummary) + '</pre>';
+  }
+
+  function escapeHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ===== PRINT =====
+  window.printSummary = function() {
+    if (!_textSummary) { alert('Generate results first.'); return; }
+    window.print();
+  };
+
+  // ===== COPY =====
+  window.copySummary = function() {
+    if (!_textSummary) { alert('Generate results first.'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(_textSummary).then(function() {
+        showCopyFeedback('Copied to clipboard');
+      });
+    } else {
+      // Fallback
+      var ta = document.createElement('textarea');
+      ta.value = _textSummary;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showCopyFeedback('Copied to clipboard');
+    }
+  };
+
+  function showCopyFeedback(msg) {
+    var btns = document.querySelectorAll('.btn-action');
+    for (var i = 0; i < btns.length; i++) {
+      if (btns[i].textContent.indexOf('Copy') !== -1) {
+        var orig = btns[i].textContent;
+        btns[i].textContent = msg;
+        btns[i].style.background = 'var(--earth-50)';
+        btns[i].style.borderColor = 'var(--earth-500)';
+        btns[i].style.color = 'var(--earth-600)';
+        setTimeout(function() {
+          btns[i].textContent = orig;
+          btns[i].style.background = '';
+          btns[i].style.borderColor = '';
+          btns[i].style.color = '';
+        }, 2000);
+        break;
+      }
+    }
+  }
+
+  // ===== DOWNLOAD =====
+  window.downloadSummary = function() {
+    if (!_textSummary) { alert('Generate results first.'); return; }
+    var blob = new Blob([_textSummary], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mld-symptom-summary-' + new Date().toISOString().slice(0,10) + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+})();
+</script>
+
+</body>
+</html>

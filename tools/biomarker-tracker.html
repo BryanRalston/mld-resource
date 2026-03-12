@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biomarker &amp; Monitoring Tracker - MLD Family Resource</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+/* ===== BIOMARKER TRACKER STYLES ===== */
+
+.tracker-privacy {
+  background: var(--sky-50);
+  border: 1px solid var(--sky-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--warm-700);
+}
+.tracker-privacy strong { color: var(--sky-700); }
+
+/* Tab navigation */
+.tracker-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 2px solid var(--warm-200);
+  margin-bottom: 24px;
+}
+.tracker-tab {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--warm-500);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -2px;
+}
+.tracker-tab:hover { color: var(--sky-600); }
+.tracker-tab.active {
+  color: var(--sky-700);
+  border-bottom-color: var(--sky-600);
+}
+
+.tracker-panel { display: none; }
+.tracker-panel.active { display: block; }
+
+/* Treatment Phase Timeline */
+.phase-timeline {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--warm-200);
+}
+.phase-block {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 0.78rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--warm-600);
+  background: var(--warm-100);
+  border-right: 1px solid var(--warm-200);
+  transition: background 0.3s;
+  position: relative;
+}
+.phase-block:last-child { border-right: none; }
+.phase-block.current {
+  background: var(--sky-100);
+  color: var(--sky-700);
+  font-weight: 700;
+}
+.phase-block.completed {
+  background: var(--earth-50);
+  color: var(--earth-600);
+}
+.phase-block .phase-name { display: block; font-weight: 600; margin-bottom: 2px; }
+.phase-block .phase-desc { display: block; font-size: 0.7rem; opacity: 0.7; }
+.phase-block.current::after {
+  content: 'CURRENT';
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: var(--sky-600);
+  letter-spacing: 0.05em;
+}
+
+/* Phase setting */
+.phase-setting {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.phase-setting label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--warm-600);
+}
+.phase-setting select,
+.phase-setting input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid var(--warm-200);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--warm-50);
+}
+
+/* Forms */
+.form-section {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.form-section h3 {
+  font-size: 1rem;
+  color: var(--sky-700);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--warm-100);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-group label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--warm-600);
+  margin-bottom: 4px;
+}
+.form-group label .unit {
+  font-weight: 400;
+  color: var(--warm-400);
+}
+.form-group label .ref {
+  font-weight: 400;
+  color: var(--earth-500);
+  font-size: 0.75rem;
+}
+.form-group input, .form-group select, .form-group textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--warm-200);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--warm-50);
+  color: var(--warm-700);
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--sky-400);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+.form-group textarea { resize: vertical; min-height: 60px; }
+
+.tracker-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.tracker-btn:active { transform: scale(0.98); }
+.tracker-btn-primary { background: var(--sky-600); color: white; }
+.tracker-btn-primary:hover { background: var(--sky-700); }
+.tracker-btn-secondary { background: var(--warm-200); color: var(--warm-700); }
+.tracker-btn-secondary:hover { background: var(--warm-300); }
+.tracker-btn-danger { background: var(--rose-600); color: white; }
+.tracker-btn-danger:hover { background: var(--rose-700); }
+.tracker-btn-small { padding: 6px 12px; font-size: 0.8rem; }
+.tracker-btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+/* Dashboard summary */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.dashboard-card {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.dashboard-card .card-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--warm-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.dashboard-card .card-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--warm-700);
+}
+.dashboard-card .card-trend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.dashboard-card.trend-improving { border-left: 4px solid var(--earth-500); }
+.dashboard-card.trend-worsening { border-left: 4px solid var(--rose-500); }
+.dashboard-card.trend-stable { border-left: 4px solid var(--warm-400); }
+.dashboard-card.trend-insufficient { border-left: 4px solid var(--warm-200); }
+.trend-improving .card-trend { color: var(--earth-600); }
+.trend-worsening .card-trend { color: var(--rose-600); }
+.trend-stable .card-trend { color: var(--warm-500); }
+.trend-insufficient .card-trend { color: var(--warm-400); }
+
+/* Safety alert */
+.safety-alert {
+  background: var(--rose-50);
+  border: 2px solid var(--rose-500);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+.safety-alert h3 {
+  color: var(--rose-700);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+.safety-alert ul { margin: 0; padding-left: 20px; }
+.safety-alert li { margin-bottom: 4px; color: var(--rose-700); }
+
+/* Charts */
+.chart-container {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.chart-container h4 {
+  font-size: 0.9rem;
+  color: var(--sky-700);
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.chart-container canvas {
+  width: 100% !important;
+  height: 200px;
+  display: block;
+}
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--warm-500);
+}
+.chart-legend span::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  margin-right: 4px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+.legend-normal::before { background: rgba(59, 130, 246, 0.2); height: 10px !important; }
+.legend-data::before { background: var(--sky-600); }
+.legend-intervention::before { background: var(--honey-400); }
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 16px;
+}
+
+/* Timeline panel */
+.timeline-entries {
+  position: relative;
+  padding-left: 28px;
+}
+.timeline-entries::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--warm-200);
+}
+.timeline-entry {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+.timeline-entry::before {
+  content: '';
+  position: absolute;
+  left: -23px;
+  top: 16px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sky-400);
+  border: 2px solid white;
+}
+.timeline-entry.type-biomarker::before { background: var(--sky-500); }
+.timeline-entry.type-symptom::before { background: var(--earth-500); }
+.timeline-entry.type-intervention::before { background: var(--honey-400); }
+.timeline-entry.type-mri::before { background: var(--rose-500); }
+.timeline-entry .tl-date {
+  font-weight: 700;
+  color: var(--warm-700);
+  font-size: 0.85rem;
+}
+.timeline-entry .tl-type {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+}
+.tl-type-bio { background: var(--sky-100); color: var(--sky-700); }
+.tl-type-sym { background: var(--earth-50); color: var(--earth-600); }
+.tl-type-int { background: var(--honey-50); color: var(--honey-500); }
+.tl-type-mri { background: var(--rose-50); color: var(--rose-600); }
+.timeline-entry .tl-details {
+  margin-top: 6px;
+  color: var(--warm-600);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Analysis tables */
+.analysis-section {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.analysis-section h3 {
+  font-size: 1rem;
+  color: var(--sky-700);
+  margin-bottom: 12px;
+}
+.analysis-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.85rem;
+}
+.analysis-table th, .analysis-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--warm-100);
+}
+.analysis-table th {
+  font-weight: 600;
+  color: var(--warm-600);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.analysis-table .improving { color: var(--earth-600); font-weight: 600; }
+.analysis-table .worsening { color: var(--rose-600); font-weight: 600; }
+.analysis-table .stable { color: var(--warm-500); }
+.analysis-table .flag { color: var(--rose-600); font-weight: 700; }
+
+/* Intervention log */
+.intervention-list {
+  list-style: none;
+  padding: 0;
+}
+.intervention-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--warm-100);
+  font-size: 0.9rem;
+}
+.intervention-item .int-name { font-weight: 600; color: var(--warm-700); }
+.intervention-item .int-date { color: var(--warm-400); font-size: 0.8rem; }
+.intervention-item .int-action {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.int-started { background: var(--earth-50); color: var(--earth-600); }
+.int-stopped { background: var(--rose-50); color: var(--rose-600); }
+.int-dose_changed { background: var(--honey-50); color: var(--honey-500); }
+
+/* Data table */
+.data-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.data-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+}
+.data-table th, .data-table td {
+  padding: 6px 8px;
+  text-align: right;
+  border-bottom: 1px solid var(--warm-100);
+  white-space: nowrap;
+}
+.data-table th {
+  text-align: right;
+  font-weight: 600;
+  color: var(--warm-600);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  background: white;
+}
+.data-table th:first-child, .data-table td:first-child { text-align: left; }
+.data-table tr:hover { background: var(--warm-50); }
+.data-table .del-btn {
+  background: none;
+  border: none;
+  color: var(--rose-500);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0 4px;
+}
+
+/* MRI score section */
+.mri-section {
+  background: white;
+  border: 1px solid var(--warm-200);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.mri-section h3 {
+  font-size: 1rem;
+  color: var(--sky-700);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--warm-100);
+}
+.mri-score-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mri-score-track {
+  flex: 1;
+  height: 12px;
+  background: var(--warm-100);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.mri-score-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+.mri-score-label {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-width: 60px;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.modal-box h3 { color: var(--rose-700); margin-bottom: 12px; }
+.modal-box p { margin-bottom: 20px; font-size: 0.9rem; color: var(--warm-600); }
+
+/* Print styles */
+.print-section { display: none; }
+@media print {
+  .site-header, .sidebar, .sidebar-overlay, .breadcrumb, .tracker-tabs,
+  .tracker-privacy, .tracker-btn-group, .hamburger, .back-to-top, .form-section,
+  .phase-timeline, .phase-setting, .skip-nav { display: none !important; }
+  .tracker-panel { display: block !important; }
+  .print-section { display: block !important; }
+  .main { margin-left: 0 !important; padding: 0 !important; }
+  .content { max-width: 100% !important; padding: 10px !important; }
+  .chart-container { break-inside: avoid; page-break-inside: avoid; }
+  .dashboard-grid { grid-template-columns: repeat(4, 1fr); }
+  body { font-size: 11px; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tracker-tabs { gap: 0; }
+  .tracker-tab { padding: 8px 10px; font-size: 0.8rem; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+  .phase-timeline { flex-direction: column; }
+  .phase-block { border-right: none; border-bottom: 1px solid var(--warm-200); }
+  .phase-block:last-child { border-bottom: none; }
+  .charts-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 500px) {
+  .charts-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-nav">Skip to main content</a>
+
+<header class="site-header">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">&#9776;</button>
+  <a href="../" class="header-title">MLD <span>Family Resource</span></a>
+  <div class="search-wrapper">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="searchInput" placeholder="Search this page..." aria-label="Search">
+  </div>
+  <span class="search-count" id="searchCount"></span>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<nav class="sidebar" id="sidebar"></nav>
+
+<main id="main-content" class="main">
+<div class="content">
+
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+
+  <div class="page-header">
+    <h1>Biomarker &amp; Monitoring Tracker</h1>
+  </div>
+
+  <div class="page-body">
+
+    <div class="tracker-privacy">
+      <strong>Privacy Notice:</strong> All data entered here is stored exclusively in your browser's local storage. Nothing is sent to any server. No cookies, no analytics, no network requests. Your child's medical data never leaves your device. Use the Export tab to create backups regularly.
+    </div>
+
+    <!-- Treatment Phase Timeline -->
+    <div class="phase-timeline" id="phaseTimeline" role="group" aria-label="Treatment phase timeline">
+      <div class="phase-block" data-phase="1">
+        <span class="phase-name">Pre-Treatment</span>
+        <span class="phase-desc">Assessment</span>
+      </div>
+      <div class="phase-block" data-phase="2">
+        <span class="phase-name">Conditioning</span>
+        <span class="phase-desc">Busulfan</span>
+      </div>
+      <div class="phase-block" data-phase="3">
+        <span class="phase-name">Gene Therapy / HSCT</span>
+        <span class="phase-desc">Infusion</span>
+      </div>
+      <div class="phase-block" data-phase="4">
+        <span class="phase-name">Engraftment</span>
+        <span class="phase-desc">Recovery</span>
+      </div>
+      <div class="phase-block" data-phase="5">
+        <span class="phase-name">Long-term</span>
+        <span class="phase-desc">Monitoring</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tracker-tabs" role="tablist" aria-label="Tracker sections">
+      <button class="tracker-tab active" role="tab" aria-selected="true" aria-controls="panel-entry" data-tab="entry">Data Entry</button>
+      <button class="tracker-tab" role="tab" aria-selected="false" aria-controls="panel-charts" data-tab="charts">Charts</button>
+      <button class="tracker-tab" role="tab" aria-selected="false" aria-controls="panel-timeline" data-tab="timeline">Timeline</button>
+      <button class="tracker-tab" role="tab" aria-selected="false" aria-controls="panel-export" data-tab="export">Export</button>
+    </div>
+
+    <!-- ============== DATA ENTRY PANEL ============== -->
+    <div class="tracker-panel active" id="panel-entry" role="tabpanel">
+
+      <!-- Phase setting -->
+      <div class="phase-setting">
+        <label for="phaseSelect">Current Phase:</label>
+        <select id="phaseSelect" aria-label="Select current treatment phase">
+          <option value="1">Pre-Treatment Assessment</option>
+          <option value="2">Conditioning (Busulfan)</option>
+          <option value="3">Gene Therapy / HSCT</option>
+          <option value="4">Engraftment &amp; Recovery</option>
+          <option value="5">Long-term Monitoring</option>
+        </select>
+        <label for="treatmentDate">Treatment Date:</label>
+        <input type="date" id="treatmentDate" aria-label="Treatment start date">
+      </div>
+
+      <!-- Lab Biomarker Entry -->
+      <div class="form-section">
+        <h3>Lab Biomarkers</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bioDate">Date of Labs</label>
+            <input type="date" id="bioDate">
+          </div>
+        </div>
+
+        <h4 style="font-size:0.9rem; color:var(--sky-600); margin:16px 0 10px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Enzyme &amp; Metabolic</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_ARSA">ARSA Enzyme Activity <span class="unit">(nmol/hr/mg)</span><br><span class="ref">Normal: &gt;10; MLD: &lt;10% of normal</span></label>
+            <input type="number" id="bio_ARSA" step="0.1" min="0" placeholder=">10 normal">
+          </div>
+          <div class="form-group">
+            <label for="bio_sulfatides">Urine Sulfatides <span class="unit">(elevated = active)</span><br><span class="ref">Elevated indicates disease activity</span></label>
+            <input type="number" id="bio_sulfatides" step="0.1" min="0" placeholder="Lab-specific">
+          </div>
+          <div class="form-group">
+            <label for="bio_lysoSulf">Lyso-sulfatide <span class="unit">(plasma)</span><br><span class="ref">Elevated in MLD</span></label>
+            <input type="number" id="bio_lysoSulf" step="0.01" min="0" placeholder="Lab-specific">
+          </div>
+        </div>
+
+        <h4 style="font-size:0.9rem; color:var(--sky-600); margin:16px 0 10px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Hematologic (Post-Transplant)</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_WBC">WBC Count <span class="unit">(K/uL)</span><br><span class="ref">Normal: 4.5-11.0</span></label>
+            <input type="number" id="bio_WBC" step="0.1" min="0" placeholder="4.5-11.0">
+          </div>
+          <div class="form-group">
+            <label for="bio_ANC">ANC <span class="unit">(K/uL)</span><br><span class="ref">Normal: 1.5-8.0; &lt;0.5 = severe neutropenia</span></label>
+            <input type="number" id="bio_ANC" step="0.1" min="0" placeholder="1.5-8.0">
+          </div>
+          <div class="form-group">
+            <label for="bio_platelets">Platelet Count <span class="unit">(K/uL)</span><br><span class="ref">Normal: 150-400</span></label>
+            <input type="number" id="bio_platelets" step="1" min="0" placeholder="150-400">
+          </div>
+          <div class="form-group">
+            <label for="bio_hemoglobin">Hemoglobin <span class="unit">(g/dL)</span><br><span class="ref">Normal: age-dependent</span></label>
+            <input type="number" id="bio_hemoglobin" step="0.1" min="0" placeholder="Age-dependent">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_chimerism">Chimerism <span class="unit">(%)</span><br><span class="ref">Donor cell engraftment; higher = better post-HSCT</span></label>
+            <input type="number" id="bio_chimerism" step="0.1" min="0" max="100" placeholder="0-100%">
+          </div>
+          <div class="form-group">
+            <label for="bio_CD34">CD34+ Count <span class="unit">(cells/uL)</span><br><span class="ref">Stem cell marker</span></label>
+            <input type="number" id="bio_CD34" step="0.1" min="0" placeholder="Lab-specific">
+          </div>
+        </div>
+
+        <h4 style="font-size:0.9rem; color:var(--sky-600); margin:16px 0 10px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">Neurological Biomarkers</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_NfL">NfL &mdash; Neurofilament Light <span class="unit">(pg/mL serum)</span><br><span class="ref">Key neurodegeneration marker; lower = better</span></label>
+            <input type="number" id="bio_NfL" step="0.1" min="0" placeholder="Age-dependent">
+          </div>
+          <div class="form-group">
+            <label for="bio_NAA">NAA &mdash; N-Acetyl-Aspartate <span class="unit">(from MRS)</span><br><span class="ref">Neuronal integrity marker; higher = better</span></label>
+            <input type="number" id="bio_NAA" step="0.01" min="0" placeholder="MRS value">
+          </div>
+        </div>
+
+        <h4 style="font-size:0.9rem; color:var(--sky-600); margin:16px 0 10px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">General</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_CRP">CRP <span class="unit">(mg/L)</span><br><span class="ref">Normal: &lt;1.0; inflammation marker</span></label>
+            <input type="number" id="bio_CRP" step="0.01" min="0" placeholder="< 1.0">
+          </div>
+          <div class="form-group">
+            <label for="bio_ALT">ALT <span class="unit">(U/L)</span><br><span class="ref">Normal: 7-56; busulfan toxicity monitoring</span></label>
+            <input type="number" id="bio_ALT" step="1" min="0" placeholder="7-56">
+          </div>
+          <div class="form-group">
+            <label for="bio_AST">AST <span class="unit">(U/L)</span><br><span class="ref">Normal: 10-40; busulfan toxicity monitoring</span></label>
+            <input type="number" id="bio_AST" step="1" min="0" placeholder="10-40">
+          </div>
+          <div class="form-group">
+            <label for="bio_creatinine">Creatinine <span class="unit">(mg/dL)</span><br><span class="ref">Normal: age-dependent; kidney function</span></label>
+            <input type="number" id="bio_creatinine" step="0.01" min="0" placeholder="Age-dependent">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="bio_vitD">Vitamin D <span class="unit">(ng/mL)</span><br><span class="ref">Optimal: 40-60</span></label>
+            <input type="number" id="bio_vitD" step="0.1" min="0" placeholder="40-60">
+          </div>
+        </div>
+        <div class="form-group" style="max-width:400px;">
+          <label for="bioNotes">Notes</label>
+          <textarea id="bioNotes" placeholder="Any notes about this lab draw (fasting status, time of day, illness, etc.)"></textarea>
+        </div>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-primary" onclick="MLD.saveBiomarkers()" aria-label="Save biomarker entry">Save Biomarker Entry</button>
+        </div>
+      </div>
+
+      <!-- Daily Symptom Tracking -->
+      <div class="form-section">
+        <h3>Daily Symptom Tracking</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="symptomDate">Date</label>
+            <input type="date" id="symptomDate">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sym_motor">Motor Function <span class="unit">(1-5)</span></label>
+            <select id="sym_motor">
+              <option value="">--</option>
+              <option value="5">5 - Independent walking</option>
+              <option value="4">4 - Walking with support</option>
+              <option value="3">3 - Sitting independently</option>
+              <option value="2">2 - Limited movement</option>
+              <option value="1">1 - Bedbound</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sym_GMFM">GMFM Score <span class="unit">(0-100)</span></label>
+            <input type="number" id="sym_GMFM" step="0.1" min="0" max="100" placeholder="If known">
+          </div>
+          <div class="form-group">
+            <label for="sym_speech">Speech/Communication <span class="unit">(1-5)</span></label>
+            <select id="sym_speech">
+              <option value="">--</option>
+              <option value="5">5 - Full speech</option>
+              <option value="4">4 - Understandable with effort</option>
+              <option value="3">3 - Single words/phrases</option>
+              <option value="2">2 - Non-verbal but responsive</option>
+              <option value="1">1 - No verbal communication</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sym_feeding">Feeding <span class="unit">(1-5)</span></label>
+            <select id="sym_feeding">
+              <option value="">--</option>
+              <option value="5">5 - Oral independent</option>
+              <option value="4">4 - Oral with modifications</option>
+              <option value="3">3 - Mixed oral/tube</option>
+              <option value="2">2 - Mostly tube feeds</option>
+              <option value="1">1 - Full tube feeds</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sym_pain">Pain Level <span class="unit">(0-10)</span></label>
+            <input type="number" id="sym_pain" step="1" min="0" max="10" placeholder="0-10">
+          </div>
+          <div class="form-group">
+            <label for="sym_seizures">Seizure Count <span class="unit">(today)</span></label>
+            <input type="number" id="sym_seizures" step="1" min="0" placeholder="Number today">
+          </div>
+          <div class="form-group">
+            <label for="sym_sleep">Sleep Quality <span class="unit">(1-5)</span></label>
+            <select id="sym_sleep">
+              <option value="">--</option>
+              <option value="1">1 - Very poor</option>
+              <option value="2">2 - Poor</option>
+              <option value="3">3 - Fair</option>
+              <option value="4">4 - Good</option>
+              <option value="5">5 - Excellent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="sym_mood">Mood/Alertness <span class="unit">(1-5)</span></label>
+            <select id="sym_mood">
+              <option value="">--</option>
+              <option value="1">1 - Unresponsive</option>
+              <option value="2">2 - Lethargic</option>
+              <option value="3">3 - Mildly alert</option>
+              <option value="4">4 - Alert and engaged</option>
+              <option value="5">5 - Bright and interactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="max-width:400px;">
+          <label for="symptomNotes">Notes</label>
+          <textarea id="symptomNotes" placeholder="Any notable observations, triggers, changes today"></textarea>
+        </div>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-primary" onclick="MLD.saveSymptoms()" aria-label="Save symptom entry">Save Symptom Entry</button>
+        </div>
+      </div>
+
+      <!-- Intervention Log -->
+      <div class="form-section">
+        <h3>Intervention Log</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Record when medications or treatments are started, stopped, or dose changed. These will appear as markers on your charts.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="intDate">Date</label>
+            <input type="date" id="intDate">
+          </div>
+          <div class="form-group">
+            <label for="intName">Medication/Intervention</label>
+            <select id="intName">
+              <option value="">-- Select or type below --</option>
+              <option value="Baclofen">Baclofen (spasticity)</option>
+              <option value="Levetiracetam">Levetiracetam (seizures)</option>
+              <option value="Gabapentin">Gabapentin (neuropathic pain)</option>
+              <option value="Botulinum toxin">Botulinum toxin (spasticity)</option>
+              <option value="G-tube placement">G-tube placement</option>
+              <option value="other">Other (enter below)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="intNameCustom">Custom Name <span class="unit">(if Other)</span></label>
+            <input type="text" id="intNameCustom" placeholder="e.g. Diazepam 2mg">
+          </div>
+          <div class="form-group">
+            <label for="intAction">Action</label>
+            <select id="intAction">
+              <option value="started">Started</option>
+              <option value="stopped">Stopped</option>
+              <option value="dose_changed">Dose Changed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="intDose">Dose</label>
+            <input type="text" id="intDose" placeholder="e.g. 5mg twice daily">
+          </div>
+          <div class="form-group">
+            <label for="intEndDate">End Date <span class="unit">(if stopped)</span></label>
+            <input type="date" id="intEndDate">
+          </div>
+        </div>
+        <div class="form-group" style="max-width:400px;">
+          <label for="intNotes">Notes</label>
+          <textarea id="intNotes" placeholder="Reason for change, side effects, etc."></textarea>
+        </div>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-primary" onclick="MLD.saveIntervention()" aria-label="Save intervention">Save Intervention</button>
+        </div>
+        <h4 style="margin-top:16px; font-size:0.9rem; color:var(--warm-600);">Intervention History</h4>
+        <ul class="intervention-list" id="interventionList"></ul>
+      </div>
+
+      <!-- MRI Tracking -->
+      <div class="form-section mri-section">
+        <h3>MRI Tracking</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Track the MLD-MRI Severity Score (Loes score, 0-34 scale) over time. Higher scores indicate more severe white matter involvement.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mriDate">Date of MRI</label>
+            <input type="date" id="mriDate">
+          </div>
+          <div class="form-group">
+            <label for="mriScore">MRI Severity Score <span class="unit">(0-34)</span><br><span class="ref">0 = normal; 34 = maximal involvement</span></label>
+            <input type="number" id="mriScore" step="0.5" min="0" max="34" placeholder="0-34">
+          </div>
+        </div>
+        <div class="form-group" style="max-width:400px;">
+          <label for="mriNotes">Notes <span class="unit">(regions affected, etc.)</span></label>
+          <textarea id="mriNotes" placeholder="Describe affected regions: frontal, parietal, occipital, periventricular, cerebellar, brainstem, corpus callosum..."></textarea>
+        </div>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-primary" onclick="MLD.saveMRI()" aria-label="Save MRI entry">Save MRI Entry</button>
+        </div>
+        <div id="mriHistory" style="margin-top:16px;"></div>
+      </div>
+
+    </div>
+
+    <!-- ============== CHARTS PANEL ============== -->
+    <div class="tracker-panel" id="panel-charts" role="tabpanel">
+      <div class="chart-legend" style="margin-bottom:16px;">
+        <span class="legend-normal">Reference range</span>
+        <span class="legend-data">Data points</span>
+        <span class="legend-intervention">Intervention marker</span>
+      </div>
+
+      <h3 style="font-size:1rem; color:var(--sky-700); margin-bottom:14px;">Biomarker Trends</h3>
+      <div class="charts-grid" id="chartsGrid"></div>
+
+      <h3 style="margin:20px 0 14px; font-size:1rem; color:var(--sky-700);">Daily Symptoms</h3>
+      <div class="charts-grid" id="symptomChartsGrid"></div>
+
+      <h3 style="margin:20px 0 14px; font-size:1rem; color:var(--sky-700);">MRI Severity Score Over Time</h3>
+      <div class="chart-container" id="mriChartContainer">
+        <canvas id="chart_mri" style="width:100%;height:200px;"></canvas>
+      </div>
+
+      <!-- Trend Analysis -->
+      <div class="analysis-section" style="margin-top:20px;">
+        <h3>Trend Analysis</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Linear regression fit to each metric's time series. Slope indicates direction and rate of change.</p>
+        <div class="data-table-wrap">
+          <table class="analysis-table" id="trendTable">
+            <thead>
+              <tr><th>Metric</th><th>Data Points</th><th>Trend</th><th>Slope</th><th>Direction</th></tr>
+            </thead>
+            <tbody id="trendBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============== TIMELINE PANEL ============== -->
+    <div class="tracker-panel" id="panel-timeline" role="tabpanel">
+      <h3 style="font-size:1rem; color:var(--sky-700); margin-bottom:14px;">Complete Timeline</h3>
+      <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:16px;">All biomarker readings, symptom entries, interventions, and MRI scans in chronological order.</p>
+      <div class="timeline-entries" id="timelineEntries">
+        <p style="color:var(--warm-400); font-style:italic;">No data yet. Start tracking to see your timeline.</p>
+      </div>
+    </div>
+
+    <!-- ============== EXPORT PANEL ============== -->
+    <div class="tracker-panel" id="panel-export" role="tabpanel">
+      <div class="form-section">
+        <h3>Export Data</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Download your data for backup, sharing with your medical team, or transferring to another device.</p>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-secondary" onclick="MLD.exportJSON()" aria-label="Export as JSON">Export JSON (Full Backup)</button>
+          <button class="tracker-btn tracker-btn-secondary" onclick="MLD.copyDoctorSummary()" aria-label="Copy summary to clipboard">Copy Summary to Clipboard</button>
+          <button class="tracker-btn tracker-btn-secondary" onclick="window.print()" aria-label="Print report">Print Report</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3>Printable Doctor Visit Summary</h3>
+        <div id="doctorSummary" style="font-size:0.88rem; line-height:1.7; color:var(--warm-700);">
+          <p style="color:var(--warm-400); font-style:italic;">Enter data on the Data Entry tab first. A summary will be generated here for your next doctor visit.</p>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3>Import Data</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Restore from a previously exported JSON backup. This will merge with any existing data.</p>
+        <div class="form-group" style="max-width:400px;">
+          <label for="importFile">Select JSON file</label>
+          <input type="file" id="importFile" accept=".json" aria-label="Choose JSON file to import">
+        </div>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-primary" onclick="MLD.importJSON()" aria-label="Import JSON data">Import JSON</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 style="color:var(--rose-700);">Clear All Data</h3>
+        <p style="font-size:0.85rem; color:var(--warm-500); margin-bottom:12px;">Permanently delete all tracker data from this browser. This cannot be undone. Export a backup first.</p>
+        <div class="tracker-btn-group">
+          <button class="tracker-btn tracker-btn-danger" onclick="MLD.showClearModal()" aria-label="Clear all data">Clear All Data</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .page-body -->
+</div><!-- .content -->
+</main><!-- .main -->
+
+<!-- Confirm clear modal -->
+<div class="modal-overlay" id="clearModal" role="dialog" aria-labelledby="clearModalTitle" aria-modal="true">
+  <div class="modal-box">
+    <h3 id="clearModalTitle">Delete All Tracker Data?</h3>
+    <p>This will permanently remove all biomarker readings, symptom entries, intervention logs, and MRI data from this browser. This cannot be undone.</p>
+    <div class="tracker-btn-group" style="justify-content:center;">
+      <button class="tracker-btn tracker-btn-danger" onclick="MLD.clearAllData()" aria-label="Confirm delete">Yes, Delete Everything</button>
+      <button class="tracker-btn tracker-btn-secondary" onclick="MLD.hideClearModal()" aria-label="Cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">&#8593;</button>
+<script src="../nav.js"></script>
+<script>
+/**
+ * MLD Biomarker & Monitoring Tracker
+ * Client-side tracking tool for Metachromatic Leukodystrophy.
+ * All data stored in localStorage. No network requests.
+ */
+var MLD = (function() {
+  'use strict';
+
+  // ===== BIOMARKER DEFINITIONS =====
+  var BIOMARKERS = [
+    // Enzyme & Metabolic
+    { id: 'ARSA',       label: 'ARSA Enzyme',       unit: 'nmol/hr/mg', normalLow: 10,   normalHigh: null,  lowerBetter: false, group: 'Enzyme & Metabolic' },
+    { id: 'sulfatides', label: 'Urine Sulfatides',  unit: '',           normalLow: null,  normalHigh: null,  lowerBetter: true,  group: 'Enzyme & Metabolic' },
+    { id: 'lysoSulf',   label: 'Lyso-sulfatide',    unit: 'plasma',     normalLow: null,  normalHigh: null,  lowerBetter: true,  group: 'Enzyme & Metabolic' },
+    // Hematologic
+    { id: 'WBC',        label: 'WBC',               unit: 'K/uL',      normalLow: 4.5,   normalHigh: 11.0,  lowerBetter: null,  group: 'Hematologic' },
+    { id: 'ANC',        label: 'ANC',               unit: 'K/uL',      normalLow: 1.5,   normalHigh: 8.0,   lowerBetter: null,  group: 'Hematologic' },
+    { id: 'platelets',  label: 'Platelets',         unit: 'K/uL',      normalLow: 150,   normalHigh: 400,   lowerBetter: null,  group: 'Hematologic' },
+    { id: 'hemoglobin', label: 'Hemoglobin',        unit: 'g/dL',      normalLow: null,   normalHigh: null,  lowerBetter: null,  group: 'Hematologic' },
+    { id: 'chimerism',  label: 'Chimerism',         unit: '%',          normalLow: null,  normalHigh: 100,   lowerBetter: false, group: 'Hematologic' },
+    { id: 'CD34',       label: 'CD34+',             unit: 'cells/uL',  normalLow: null,  normalHigh: null,   lowerBetter: null,  group: 'Hematologic' },
+    // Neurological
+    { id: 'NfL',        label: 'NfL',               unit: 'pg/mL',     normalLow: null,  normalHigh: null,   lowerBetter: true,  group: 'Neurological' },
+    { id: 'NAA',        label: 'NAA',               unit: 'MRS',       normalLow: null,  normalHigh: null,   lowerBetter: false, group: 'Neurological' },
+    // General
+    { id: 'CRP',        label: 'CRP',               unit: 'mg/L',      normalLow: null,  normalHigh: 1.0,    lowerBetter: true,  group: 'General' },
+    { id: 'ALT',        label: 'ALT',               unit: 'U/L',       normalLow: 7,     normalHigh: 56,     lowerBetter: null,  group: 'General' },
+    { id: 'AST',        label: 'AST',               unit: 'U/L',       normalLow: 10,    normalHigh: 40,     lowerBetter: null,  group: 'General' },
+    { id: 'creatinine', label: 'Creatinine',        unit: 'mg/dL',     normalLow: null,  normalHigh: null,   lowerBetter: null,  group: 'General' },
+    { id: 'vitD',       label: 'Vitamin D',         unit: 'ng/mL',     normalLow: 40,    normalHigh: 60,     lowerBetter: false, group: 'General' }
+  ];
+
+  var SYMPTOMS = [
+    { id: 'motor',    label: 'Motor Function',       unit: '/5',   lowerBetter: false },
+    { id: 'GMFM',     label: 'GMFM Score',           unit: '/100', lowerBetter: false },
+    { id: 'speech',   label: 'Speech',               unit: '/5',   lowerBetter: false },
+    { id: 'feeding',  label: 'Feeding',              unit: '/5',   lowerBetter: false },
+    { id: 'pain',     label: 'Pain',                 unit: '/10',  lowerBetter: true  },
+    { id: 'seizures', label: 'Seizures',             unit: 'count',lowerBetter: true  },
+    { id: 'sleep',    label: 'Sleep Quality',        unit: '/5',   lowerBetter: false },
+    { id: 'mood',     label: 'Mood/Alertness',       unit: '/5',   lowerBetter: false }
+  ];
+
+  // Storage keys
+  var KEYS = {
+    biomarkers:    'mld_biomarkers',
+    symptoms:      'mld_symptoms',
+    interventions: 'mld_interventions',
+    mri:           'mld_mri',
+    phase:         'mld_phase',
+    treatmentDate: 'mld_treatment_date'
+  };
+
+  // ===== DATA ACCESS =====
+  function getData(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+  function setData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  function getSetting(key) {
+    return localStorage.getItem(key) || '';
+  }
+  function setSetting(key, val) {
+    localStorage.setItem(key, val);
+  }
+
+  // ===== SAVE FUNCTIONS =====
+  function saveBiomarkers() {
+    var dateVal = document.getElementById('bioDate').value;
+    if (!dateVal) { alert('Please enter a date for the lab results.'); return; }
+    var entry = { date: dateVal, ts: Date.now(), notes: document.getElementById('bioNotes').value };
+    var hasValue = false;
+    BIOMARKERS.forEach(function(b) {
+      var el = document.getElementById('bio_' + b.id);
+      if (el && el.value !== '') {
+        entry[b.id] = parseFloat(el.value);
+        hasValue = true;
+      }
+    });
+    if (!hasValue) { alert('Please enter at least one biomarker value.'); return; }
+    var data = getData(KEYS.biomarkers);
+    data.push(entry);
+    data.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setData(KEYS.biomarkers, data);
+    // Clear form
+    BIOMARKERS.forEach(function(b) {
+      var el = document.getElementById('bio_' + b.id);
+      if (el) el.value = '';
+    });
+    document.getElementById('bioNotes').value = '';
+    alert('Biomarker entry saved.');
+    refreshAll();
+  }
+
+  function saveSymptoms() {
+    var dateVal = document.getElementById('symptomDate').value;
+    if (!dateVal) { alert('Please enter a date.'); return; }
+    var entry = { date: dateVal, ts: Date.now(), notes: document.getElementById('symptomNotes').value };
+    var hasValue = false;
+    SYMPTOMS.forEach(function(s) {
+      var el = document.getElementById('sym_' + s.id);
+      if (el && el.value !== '') {
+        entry[s.id] = parseFloat(el.value);
+        hasValue = true;
+      }
+    });
+    if (!hasValue) { alert('Please enter at least one symptom value.'); return; }
+    var data = getData(KEYS.symptoms);
+    data.push(entry);
+    data.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setData(KEYS.symptoms, data);
+    // Clear
+    SYMPTOMS.forEach(function(s) {
+      var el = document.getElementById('sym_' + s.id);
+      if (el) el.value = '';
+    });
+    document.getElementById('symptomNotes').value = '';
+    alert('Symptom entry saved.');
+    refreshAll();
+  }
+
+  function saveIntervention() {
+    var dateVal = document.getElementById('intDate').value;
+    var nameSelect = document.getElementById('intName').value;
+    var nameCustom = document.getElementById('intNameCustom').value.trim();
+    var name = (nameSelect === 'other' || nameSelect === '') ? nameCustom : nameSelect;
+    if (!dateVal || !name) { alert('Please enter a date and intervention name.'); return; }
+    var entry = {
+      date: dateVal,
+      name: name,
+      dose: document.getElementById('intDose').value.trim(),
+      action: document.getElementById('intAction').value,
+      endDate: document.getElementById('intEndDate').value || '',
+      notes: document.getElementById('intNotes').value,
+      ts: Date.now()
+    };
+    var data = getData(KEYS.interventions);
+    data.push(entry);
+    data.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setData(KEYS.interventions, data);
+    document.getElementById('intName').value = '';
+    document.getElementById('intNameCustom').value = '';
+    document.getElementById('intDose').value = '';
+    document.getElementById('intEndDate').value = '';
+    document.getElementById('intNotes').value = '';
+    alert('Intervention logged.');
+    refreshAll();
+  }
+
+  function saveMRI() {
+    var dateVal = document.getElementById('mriDate').value;
+    var score = document.getElementById('mriScore').value;
+    if (!dateVal) { alert('Please enter the date of the MRI.'); return; }
+    if (score === '') { alert('Please enter the MRI severity score.'); return; }
+    var entry = {
+      date: dateVal,
+      score: parseFloat(score),
+      notes: document.getElementById('mriNotes').value,
+      ts: Date.now()
+    };
+    var data = getData(KEYS.mri);
+    data.push(entry);
+    data.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setData(KEYS.mri, data);
+    document.getElementById('mriScore').value = '';
+    document.getElementById('mriNotes').value = '';
+    alert('MRI entry saved.');
+    refreshAll();
+  }
+
+  // ===== PHASE MANAGEMENT =====
+  function loadPhase() {
+    var phase = getSetting(KEYS.phase) || '1';
+    var tDate = getSetting(KEYS.treatmentDate);
+    document.getElementById('phaseSelect').value = phase;
+    if (tDate) document.getElementById('treatmentDate').value = tDate;
+    updatePhaseTimeline(phase);
+  }
+  function savePhase() {
+    var phase = document.getElementById('phaseSelect').value;
+    var tDate = document.getElementById('treatmentDate').value;
+    setSetting(KEYS.phase, phase);
+    if (tDate) setSetting(KEYS.treatmentDate, tDate);
+    updatePhaseTimeline(phase);
+  }
+  function updatePhaseTimeline(phase) {
+    var phaseNum = parseInt(phase);
+    var blocks = document.querySelectorAll('.phase-block');
+    blocks.forEach(function(b) {
+      var bp = parseInt(b.getAttribute('data-phase'));
+      b.classList.remove('current', 'completed');
+      if (bp === phaseNum) b.classList.add('current');
+      else if (bp < phaseNum) b.classList.add('completed');
+    });
+  }
+
+  // ===== LINEAR REGRESSION =====
+  function linearRegression(points) {
+    var n = points.length;
+    if (n < 2) return null;
+    var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    points.forEach(function(p) {
+      sumX += p.x; sumY += p.y; sumXY += p.x * p.y; sumX2 += p.x * p.x;
+    });
+    var denom = n * sumX2 - sumX * sumX;
+    if (denom === 0) return null;
+    var slope = (n * sumXY - sumX * sumY) / denom;
+    var intercept = (sumY - slope * sumX) / n;
+    return { slope: slope, intercept: intercept };
+  }
+
+  function dateToNum(dateStr) {
+    return new Date(dateStr).getTime();
+  }
+
+  // ===== TREND CLASSIFICATION =====
+  function classifyTrend(bioOrSym, regression, dataPoints) {
+    if (!regression || dataPoints.length < 2) return { cls: 'insufficient', label: 'Insufficient data', arrow: '--' };
+    var slopePerWeek = regression.slope * (7 * 24 * 60 * 60 * 1000);
+    var vals = dataPoints.map(function(p) { return p.y; });
+    var mean = vals.reduce(function(a,b) { return a+b; }, 0) / vals.length;
+    var relSlope = mean !== 0 ? Math.abs(slopePerWeek / mean) : 0;
+    if (relSlope < 0.02) return { cls: 'stable', label: 'Stable', arrow: '~' };
+    if (bioOrSym.lowerBetter !== null && bioOrSym.lowerBetter !== undefined) {
+      if (bioOrSym.lowerBetter) {
+        return slopePerWeek < 0
+          ? { cls: 'improving', label: 'Improving', arrow: 'v' }
+          : { cls: 'worsening', label: 'Worsening', arrow: '^' };
+      } else {
+        return slopePerWeek > 0
+          ? { cls: 'improving', label: 'Improving', arrow: '^' }
+          : { cls: 'worsening', label: 'Worsening', arrow: 'v' };
+      }
+    }
+    return { cls: 'stable', label: 'Change detected', arrow: slopePerWeek > 0 ? '^' : 'v' };
+  }
+
+  // ===== SAFETY FLAGS =====
+  function checkSafetyFlags(bioData) {
+    var alerts = [];
+    if (bioData.length === 0) return alerts;
+    var latest = bioData[bioData.length - 1];
+    BIOMARKERS.forEach(function(b) {
+      if (latest[b.id] === undefined) return;
+      var val = latest[b.id];
+      if (b.normalHigh !== null && val > b.normalHigh * 2) {
+        alerts.push(b.label + ' is ' + val + ' ' + b.unit + ' \u2014 significantly above normal range');
+      }
+      if (b.normalLow !== null && val < b.normalLow * 0.5 && b.normalLow > 0) {
+        alerts.push(b.label + ' is ' + val + ' ' + b.unit + ' \u2014 significantly below normal range');
+      }
+    });
+    // ANC critical check
+    if (latest.ANC !== undefined && latest.ANC < 0.5) {
+      alerts.push('ANC is ' + latest.ANC + ' K/uL \u2014 severe neutropenia. Contact your medical team immediately.');
+    }
+    // Platelet critical check
+    if (latest.platelets !== undefined && latest.platelets < 50) {
+      alerts.push('Platelet count is ' + latest.platelets + ' K/uL \u2014 significantly low. Contact your medical team.');
+    }
+    return alerts;
+  }
+
+  // ===== CANVAS CHARTS =====
+  function drawChart(canvas, dataPoints, biomarker, interventions) {
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = 200 * dpr;
+    ctx.scale(dpr, dpr);
+    var W = rect.width;
+    var H = 200;
+    var pad = { top: 10, right: 20, bottom: 30, left: 50 };
+    var plotW = W - pad.left - pad.right;
+    var plotH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (dataPoints.length === 0) {
+      ctx.fillStyle = '#a8a29a';
+      ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No data', W / 2, H / 2);
+      return;
+    }
+
+    var vals = dataPoints.map(function(p) { return p.y; });
+    var dates = dataPoints.map(function(p) { return p.x; });
+    var yMin = Math.min.apply(null, vals);
+    var yMax = Math.max.apply(null, vals);
+    if (biomarker.normalLow !== null) yMin = Math.min(yMin, biomarker.normalLow * 0.8);
+    if (biomarker.normalHigh !== null) yMax = Math.max(yMax, biomarker.normalHigh * 1.2);
+    var yRange = yMax - yMin;
+    if (yRange === 0) { yMin -= 1; yMax += 1; yRange = 2; }
+    yMin -= yRange * 0.1;
+    yMax += yRange * 0.1;
+
+    var xMin = Math.min.apply(null, dates);
+    var xMax = Math.max.apply(null, dates);
+    if (xMin === xMax) { xMin -= 86400000; xMax += 86400000; }
+
+    function xScale(v) { return pad.left + ((v - xMin) / (xMax - xMin)) * plotW; }
+    function yScale(v) { return pad.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
+
+    // Normal range shading
+    if (biomarker.normalLow !== null || biomarker.normalHigh !== null) {
+      var nLow = biomarker.normalLow !== null ? yScale(biomarker.normalLow) : pad.top + plotH;
+      var nHigh = biomarker.normalHigh !== null ? yScale(biomarker.normalHigh) : pad.top;
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.08)';
+      ctx.fillRect(pad.left, Math.min(nLow, nHigh), plotW, Math.abs(nLow - nHigh));
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      if (biomarker.normalHigh !== null) {
+        ctx.beginPath(); ctx.moveTo(pad.left, yScale(biomarker.normalHigh)); ctx.lineTo(pad.left + plotW, yScale(biomarker.normalHigh)); ctx.stroke();
+      }
+      if (biomarker.normalLow !== null) {
+        ctx.beginPath(); ctx.moveTo(pad.left, yScale(biomarker.normalLow)); ctx.lineTo(pad.left + plotW, yScale(biomarker.normalLow)); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    // Intervention markers
+    if (interventions && interventions.length > 0) {
+      interventions.forEach(function(intv) {
+        var ix = dateToNum(intv.date);
+        if (ix >= xMin && ix <= xMax) {
+          var px = xScale(ix);
+          ctx.strokeStyle = '#d4a84b';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath();
+          ctx.moveTo(px, pad.top);
+          ctx.lineTo(px, pad.top + plotH);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#d4a84b';
+          ctx.font = '9px -apple-system, BlinkMacSystemFont, sans-serif';
+          ctx.textAlign = 'center';
+          var actionSymbol = intv.action === 'started' ? '+' : intv.action === 'stopped' ? '-' : '~';
+          ctx.fillText(actionSymbol + intv.name.substring(0, 12), px, pad.top + plotH + 22);
+        }
+      });
+    }
+
+    // Data line
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    dataPoints.forEach(function(p, i) {
+      var px = xScale(p.x);
+      var py = yScale(p.y);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // Data points
+    dataPoints.forEach(function(p) {
+      var px = xScale(p.x);
+      var py = yScale(p.y);
+      ctx.fillStyle = '#2563eb';
+      ctx.beginPath();
+      ctx.arc(px, py, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Y-axis labels
+    ctx.fillStyle = '#78716a';
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'right';
+    var yTicks = 5;
+    for (var i = 0; i <= yTicks; i++) {
+      var yVal = yMin + (yMax - yMin) * (i / yTicks);
+      var py = yScale(yVal);
+      ctx.fillText(yVal.toFixed(yVal >= 100 ? 0 : 1), pad.left - 6, py + 3);
+      ctx.strokeStyle = 'rgba(168,162,154,0.15)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(pad.left + plotW, py); ctx.stroke();
+    }
+
+    // X-axis date labels
+    ctx.fillStyle = '#78716a';
+    ctx.font = '10px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    var maxDateLabels = Math.min(dataPoints.length, 6);
+    var step = Math.max(1, Math.floor(dataPoints.length / maxDateLabels));
+    for (var i = 0; i < dataPoints.length; i += step) {
+      var px = xScale(dataPoints[i].x);
+      var d = new Date(dataPoints[i].x);
+      var label = (d.getMonth() + 1) + '/' + d.getDate();
+      ctx.fillText(label, px, pad.top + plotH + 14);
+    }
+  }
+
+  // ===== REFRESH CHARTS =====
+  function refreshCharts() {
+    var bioData = getData(KEYS.biomarkers);
+    var symData = getData(KEYS.symptoms);
+    var mriData = getData(KEYS.mri);
+    var interventions = getData(KEYS.interventions);
+
+    // Biomarker charts
+    var chartsGrid = document.getElementById('chartsGrid');
+    var html = '';
+    BIOMARKERS.forEach(function(b) {
+      var points = [];
+      bioData.forEach(function(d) {
+        if (d[b.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[b.id] });
+      });
+      if (points.length === 0) return;
+      var reg = linearRegression(points);
+      var trend = classifyTrend(b, reg, points);
+      html += '<div class="chart-container">';
+      html += '<h4>' + b.label + (b.unit ? ' (' + b.unit + ')' : '') + ' <span style="float:right;font-size:0.8em;font-weight:400;color:' +
+        (trend.cls === 'improving' ? 'var(--earth-600)' : trend.cls === 'worsening' ? 'var(--rose-600)' : 'var(--warm-500)') +
+        ';">' + trend.label + '</span></h4>';
+      html += '<canvas id="chart_' + b.id + '" style="width:100%;height:200px;"></canvas>';
+      html += '</div>';
+    });
+    chartsGrid.innerHTML = html || '<p style="color:var(--warm-400);font-style:italic;">No biomarker data yet. Enter readings on the Data Entry tab.</p>';
+
+    // Draw biomarker charts
+    BIOMARKERS.forEach(function(b) {
+      var canvas = document.getElementById('chart_' + b.id);
+      if (!canvas) return;
+      var points = [];
+      bioData.forEach(function(d) {
+        if (d[b.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[b.id] });
+      });
+      drawChart(canvas, points, b, interventions);
+    });
+
+    // Symptom charts
+    var symGrid = document.getElementById('symptomChartsGrid');
+    var symHtml = '';
+    SYMPTOMS.forEach(function(s) {
+      var points = [];
+      symData.forEach(function(d) {
+        if (d[s.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[s.id] });
+      });
+      if (points.length === 0) return;
+      var fakeBio = { normalLow: null, normalHigh: null, lowerBetter: s.lowerBetter };
+      var reg = linearRegression(points);
+      var trend = classifyTrend(s, reg, points);
+      symHtml += '<div class="chart-container">';
+      symHtml += '<h4>' + s.label + (s.unit ? ' (' + s.unit + ')' : '') + ' <span style="float:right;font-size:0.8em;font-weight:400;color:' +
+        (trend.cls === 'improving' ? 'var(--earth-600)' : trend.cls === 'worsening' ? 'var(--rose-600)' : 'var(--warm-500)') +
+        ';">' + trend.label + '</span></h4>';
+      symHtml += '<canvas id="symchart_' + s.id + '" style="width:100%;height:200px;"></canvas>';
+      symHtml += '</div>';
+    });
+    symGrid.innerHTML = symHtml || '<p style="color:var(--warm-400);font-style:italic;">No symptom data yet.</p>';
+
+    SYMPTOMS.forEach(function(s) {
+      var canvas = document.getElementById('symchart_' + s.id);
+      if (!canvas) return;
+      var points = [];
+      symData.forEach(function(d) {
+        if (d[s.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[s.id] });
+      });
+      var fakeBio = { normalLow: null, normalHigh: null, lowerBetter: s.lowerBetter };
+      drawChart(canvas, points, fakeBio, interventions);
+    });
+
+    // MRI chart
+    var mriCanvas = document.getElementById('chart_mri');
+    if (mriCanvas) {
+      var mriPoints = mriData.map(function(d) { return { x: dateToNum(d.date), y: d.score }; });
+      var mriBio = { normalLow: null, normalHigh: null, lowerBetter: true };
+      drawChart(mriCanvas, mriPoints, mriBio, interventions);
+    }
+
+    // Trend analysis table
+    refreshTrendTable(bioData, symData, mriData);
+  }
+
+  // ===== TREND TABLE =====
+  function refreshTrendTable(bioData, symData, mriData) {
+    var trendBody = document.getElementById('trendBody');
+    var html = '';
+
+    BIOMARKERS.forEach(function(b) {
+      var points = [];
+      bioData.forEach(function(d) {
+        if (d[b.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[b.id] });
+      });
+      if (points.length === 0) return;
+      var reg = linearRegression(points);
+      var trend = classifyTrend(b, reg, points);
+      var slopeStr = '--';
+      if (reg) {
+        var slopePerWeek = reg.slope * (7 * 24 * 60 * 60 * 1000);
+        slopeStr = (slopePerWeek >= 0 ? '+' : '') + slopePerWeek.toFixed(3) + '/wk';
+      }
+      html += '<tr>';
+      html += '<td>' + b.label + '</td>';
+      html += '<td>' + points.length + '</td>';
+      html += '<td class="' + trend.cls + '">' + trend.label + '</td>';
+      html += '<td>' + slopeStr + '</td>';
+      html += '<td class="' + trend.cls + '">' + arrowSymbol(trend.arrow) + '</td>';
+      html += '</tr>';
+    });
+
+    SYMPTOMS.forEach(function(s) {
+      var points = [];
+      symData.forEach(function(d) {
+        if (d[s.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[s.id] });
+      });
+      if (points.length === 0) return;
+      var reg = linearRegression(points);
+      var trend = classifyTrend(s, reg, points);
+      var slopeStr = '--';
+      if (reg) {
+        var slopePerWeek = reg.slope * (7 * 24 * 60 * 60 * 1000);
+        slopeStr = (slopePerWeek >= 0 ? '+' : '') + slopePerWeek.toFixed(3) + '/wk';
+      }
+      html += '<tr>';
+      html += '<td>' + s.label + '</td>';
+      html += '<td>' + points.length + '</td>';
+      html += '<td class="' + trend.cls + '">' + trend.label + '</td>';
+      html += '<td>' + slopeStr + '</td>';
+      html += '<td class="' + trend.cls + '">' + arrowSymbol(trend.arrow) + '</td>';
+      html += '</tr>';
+    });
+
+    // MRI
+    if (mriData && mriData.length > 0) {
+      var mriPoints = mriData.map(function(d) { return { x: dateToNum(d.date), y: d.score }; });
+      var reg = linearRegression(mriPoints);
+      var trend = classifyTrend({ lowerBetter: true }, reg, mriPoints);
+      var slopeStr = '--';
+      if (reg) {
+        var slopePerWeek = reg.slope * (7 * 24 * 60 * 60 * 1000);
+        slopeStr = (slopePerWeek >= 0 ? '+' : '') + slopePerWeek.toFixed(3) + '/wk';
+      }
+      html += '<tr>';
+      html += '<td>MRI Severity Score</td>';
+      html += '<td>' + mriPoints.length + '</td>';
+      html += '<td class="' + trend.cls + '">' + trend.label + '</td>';
+      html += '<td>' + slopeStr + '</td>';
+      html += '<td class="' + trend.cls + '">' + arrowSymbol(trend.arrow) + '</td>';
+      html += '</tr>';
+    }
+
+    trendBody.innerHTML = html || '<tr><td colspan="5" style="color:var(--warm-400);font-style:italic;">No data to analyze yet.</td></tr>';
+  }
+
+  function arrowSymbol(arrow) {
+    if (arrow === '^') return '&#9650;';
+    if (arrow === 'v') return '&#9660;';
+    if (arrow === '~') return '&#9644;';
+    return '--';
+  }
+
+  // ===== TIMELINE =====
+  function refreshTimeline() {
+    var bioData = getData(KEYS.biomarkers);
+    var symData = getData(KEYS.symptoms);
+    var interventions = getData(KEYS.interventions);
+    var mriData = getData(KEYS.mri);
+
+    // Merge all entries
+    var all = [];
+    bioData.forEach(function(d) { all.push({ date: d.date, type: 'biomarker', data: d }); });
+    symData.forEach(function(d) { all.push({ date: d.date, type: 'symptom', data: d }); });
+    interventions.forEach(function(d) { all.push({ date: d.date, type: 'intervention', data: d }); });
+    mriData.forEach(function(d) { all.push({ date: d.date, type: 'mri', data: d }); });
+
+    all.sort(function(a,b) { return b.date.localeCompare(a.date); }); // newest first
+
+    var container = document.getElementById('timelineEntries');
+    if (all.length === 0) {
+      container.innerHTML = '<p style="color:var(--warm-400); font-style:italic;">No data yet. Start tracking to see your timeline.</p>';
+      return;
+    }
+
+    var html = '';
+    all.forEach(function(item) {
+      var d = item.data;
+      html += '<div class="timeline-entry type-' + item.type + '">';
+      html += '<span class="tl-date">' + item.date + '</span>';
+
+      if (item.type === 'biomarker') {
+        html += '<span class="tl-type tl-type-bio">Lab Results</span>';
+        html += '<div class="tl-details">';
+        var vals = [];
+        BIOMARKERS.forEach(function(b) {
+          if (d[b.id] !== undefined) vals.push(b.label + ': ' + d[b.id] + (b.unit ? ' ' + b.unit : ''));
+        });
+        html += vals.join(' &bull; ');
+        if (d.notes) html += '<br><em>' + escapeHtml(d.notes) + '</em>';
+        html += '</div>';
+      } else if (item.type === 'symptom') {
+        html += '<span class="tl-type tl-type-sym">Daily Symptoms</span>';
+        html += '<div class="tl-details">';
+        var vals = [];
+        SYMPTOMS.forEach(function(s) {
+          if (d[s.id] !== undefined) vals.push(s.label + ': ' + d[s.id] + s.unit);
+        });
+        html += vals.join(' &bull; ');
+        if (d.notes) html += '<br><em>' + escapeHtml(d.notes) + '</em>';
+        html += '</div>';
+      } else if (item.type === 'intervention') {
+        html += '<span class="tl-type tl-type-int">' + escapeHtml(d.action) + '</span>';
+        html += '<div class="tl-details">';
+        html += '<strong>' + escapeHtml(d.name) + '</strong>';
+        if (d.dose) html += ' &mdash; ' + escapeHtml(d.dose);
+        if (d.notes) html += '<br><em>' + escapeHtml(d.notes) + '</em>';
+        html += '</div>';
+      } else if (item.type === 'mri') {
+        html += '<span class="tl-type tl-type-mri">MRI</span>';
+        html += '<div class="tl-details">';
+        html += 'Severity Score: <strong>' + d.score + '/34</strong>';
+        if (d.notes) html += '<br><em>' + escapeHtml(d.notes) + '</em>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ===== MRI HISTORY =====
+  function refreshMRIHistory() {
+    var mriData = getData(KEYS.mri);
+    var container = document.getElementById('mriHistory');
+    if (!container) return;
+    if (mriData.length === 0) {
+      container.innerHTML = '<p style="color:var(--warm-400);font-style:italic;">No MRI data yet.</p>';
+      return;
+    }
+    var html = '<h4 style="font-size:0.9rem; color:var(--warm-600); margin-bottom:8px;">MRI History</h4>';
+    html += '<div class="data-table-wrap"><table class="data-table"><thead><tr><th style="text-align:left;">Date</th><th>Score (/34)</th><th style="text-align:left;">Notes</th><th></th></tr></thead><tbody>';
+    mriData.slice().reverse().forEach(function(d, idx) {
+      var realIdx = mriData.length - 1 - idx;
+      var pct = (d.score / 34 * 100).toFixed(0);
+      var color = d.score <= 8 ? 'var(--earth-500)' : d.score <= 18 ? 'var(--honey-400)' : 'var(--rose-500)';
+      html += '<tr>';
+      html += '<td style="text-align:left;">' + d.date + '</td>';
+      html += '<td>';
+      html += '<div class="mri-score-bar"><div class="mri-score-track"><div class="mri-score-fill" style="width:' + pct + '%;background:' + color + ';"></div></div>';
+      html += '<span class="mri-score-label" style="color:' + color + ';">' + d.score + '</span></div>';
+      html += '</td>';
+      html += '<td style="text-align:left;white-space:normal;max-width:200px;">' + escapeHtml(d.notes || '') + '</td>';
+      html += '<td><button class="del-btn" onclick="MLD.deleteMRIEntry(' + realIdx + ')" title="Delete" aria-label="Delete MRI entry">&#10005;</button></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }
+
+  // ===== INTERVENTION LIST =====
+  function refreshInterventionList() {
+    var interventions = getData(KEYS.interventions);
+    var intList = document.getElementById('interventionList');
+    if (!intList) return;
+    if (interventions.length === 0) {
+      intList.innerHTML = '<li style="padding:8px 0;color:var(--warm-400);font-style:italic;">No interventions logged yet.</li>';
+    } else {
+      var html = '';
+      interventions.slice().reverse().forEach(function(intv, idx) {
+        var realIdx = interventions.length - 1 - idx;
+        html += '<li class="intervention-item">';
+        html += '<div><span class="int-name">' + escapeHtml(intv.name) + '</span>';
+        if (intv.dose) html += '<br><span style="font-size:0.8rem;color:var(--warm-500);">Dose: ' + escapeHtml(intv.dose) + '</span>';
+        if (intv.notes) html += '<br><span style="font-size:0.8rem;color:var(--warm-400);">' + escapeHtml(intv.notes) + '</span>';
+        html += '</div>';
+        html += '<div style="text-align:right;">';
+        html += '<span class="int-date">' + intv.date + '</span><br>';
+        html += '<span class="int-action int-' + intv.action + '">' + intv.action.replace('_', ' ') + '</span>';
+        html += ' <button class="del-btn" onclick="MLD.deleteIntervention(' + realIdx + ')" title="Delete" aria-label="Delete intervention">&#10005;</button>';
+        html += '</div>';
+        html += '</li>';
+      });
+      intList.innerHTML = html;
+    }
+  }
+
+  // ===== DOCTOR SUMMARY =====
+  function buildDoctorSummary() {
+    var bioData = getData(KEYS.biomarkers);
+    var symData = getData(KEYS.symptoms);
+    var interventions = getData(KEYS.interventions);
+    var mriData = getData(KEYS.mri);
+    var phase = getSetting(KEYS.phase) || '1';
+    var phaseNames = {
+      '1': 'Pre-Treatment Assessment',
+      '2': 'Conditioning (Busulfan)',
+      '3': 'Gene Therapy / HSCT',
+      '4': 'Engraftment & Recovery',
+      '5': 'Long-term Monitoring'
+    };
+
+    var lines = [];
+    lines.push('MLD BIOMARKER & MONITORING SUMMARY');
+    lines.push('Generated: ' + new Date().toLocaleDateString());
+    lines.push('Current Phase: ' + (phaseNames[phase] || 'Unknown'));
+    lines.push('');
+
+    // Latest biomarkers
+    if (bioData.length > 0) {
+      var latest = bioData[bioData.length - 1];
+      lines.push('--- LATEST LAB RESULTS (' + latest.date + ') ---');
+      BIOMARKERS.forEach(function(b) {
+        if (latest[b.id] !== undefined) {
+          var range = '';
+          if (b.normalLow !== null && b.normalHigh !== null) range = ' [normal: ' + b.normalLow + '-' + b.normalHigh + ']';
+          else if (b.normalHigh !== null) range = ' [normal: <' + b.normalHigh + ']';
+          else if (b.normalLow !== null) range = ' [normal: >' + b.normalLow + ']';
+          lines.push('  ' + b.label + ': ' + latest[b.id] + ' ' + b.unit + range);
+        }
+      });
+      if (latest.notes) lines.push('  Notes: ' + latest.notes);
+      lines.push('');
+    }
+
+    // Latest symptoms
+    if (symData.length > 0) {
+      var latest = symData[symData.length - 1];
+      lines.push('--- LATEST SYMPTOMS (' + latest.date + ') ---');
+      SYMPTOMS.forEach(function(s) {
+        if (latest[s.id] !== undefined) {
+          lines.push('  ' + s.label + ': ' + latest[s.id] + ' ' + s.unit);
+        }
+      });
+      if (latest.notes) lines.push('  Notes: ' + latest.notes);
+      lines.push('');
+    }
+
+    // Latest MRI
+    if (mriData.length > 0) {
+      var latest = mriData[mriData.length - 1];
+      lines.push('--- LATEST MRI (' + latest.date + ') ---');
+      lines.push('  Severity Score: ' + latest.score + '/34');
+      if (latest.notes) lines.push('  Regions: ' + latest.notes);
+      lines.push('');
+    }
+
+    // Active interventions
+    if (interventions.length > 0) {
+      lines.push('--- CURRENT INTERVENTIONS ---');
+      // Show most recent action for each unique intervention name
+      var seen = {};
+      interventions.slice().reverse().forEach(function(intv) {
+        if (!seen[intv.name]) {
+          seen[intv.name] = true;
+          var status = intv.action === 'stopped' ? '(stopped ' + intv.date + ')' : '(since ' + intv.date + ')';
+          lines.push('  ' + intv.name + (intv.dose ? ' ' + intv.dose : '') + ' ' + status);
+        }
+      });
+      lines.push('');
+    }
+
+    // Trends
+    if (bioData.length >= 2) {
+      lines.push('--- TRENDS ---');
+      BIOMARKERS.forEach(function(b) {
+        var points = [];
+        bioData.forEach(function(d) {
+          if (d[b.id] !== undefined) points.push({ x: dateToNum(d.date), y: d[b.id] });
+        });
+        if (points.length < 2) return;
+        var reg = linearRegression(points);
+        var trend = classifyTrend(b, reg, points);
+        if (trend.cls !== 'insufficient') {
+          lines.push('  ' + b.label + ': ' + trend.label);
+        }
+      });
+      lines.push('');
+    }
+
+    lines.push('Data entries: ' + bioData.length + ' lab results, ' + symData.length + ' symptom entries, ' + interventions.length + ' interventions, ' + mriData.length + ' MRI scans');
+
+    return lines.join('\n');
+  }
+
+  function refreshDoctorSummary() {
+    var container = document.getElementById('doctorSummary');
+    if (!container) return;
+    var bioData = getData(KEYS.biomarkers);
+    var symData = getData(KEYS.symptoms);
+    if (bioData.length === 0 && symData.length === 0) {
+      container.innerHTML = '<p style="color:var(--warm-400); font-style:italic;">Enter data on the Data Entry tab first. A summary will be generated here for your next doctor visit.</p>';
+      return;
+    }
+    var summary = buildDoctorSummary();
+    container.innerHTML = '<pre style="white-space:pre-wrap;word-wrap:break-word;font-family:\'JetBrains Mono\',monospace;font-size:0.82rem;background:var(--warm-50);padding:16px;border-radius:6px;border:1px solid var(--warm-200);line-height:1.6;">' + escapeHtml(summary) + '</pre>';
+  }
+
+  function copyDoctorSummary() {
+    var summary = buildDoctorSummary();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(summary).then(function() {
+        alert('Summary copied to clipboard.');
+      }, function() {
+        fallbackCopy(summary);
+      });
+    } else {
+      fallbackCopy(summary);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('Summary copied to clipboard.');
+    } catch(e) {
+      alert('Could not copy. Please select and copy manually from the summary below.');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // ===== EXPORT =====
+  function exportJSON() {
+    var data = {
+      version: 1,
+      app: 'MLD Biomarker Tracker',
+      exported: new Date().toISOString(),
+      phase: getSetting(KEYS.phase),
+      treatmentDate: getSetting(KEYS.treatmentDate),
+      biomarkers: getData(KEYS.biomarkers),
+      symptoms: getData(KEYS.symptoms),
+      interventions: getData(KEYS.interventions),
+      mri: getData(KEYS.mri)
+    };
+    downloadFile('mld-biomarker-backup.json', JSON.stringify(data, null, 2), 'application/json');
+  }
+
+  function importJSON() {
+    var fileInput = document.getElementById('importFile');
+    if (!fileInput.files || fileInput.files.length === 0) {
+      alert('Please select a JSON file to import.');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var imported = JSON.parse(e.target.result);
+        if (!imported.version) {
+          alert('This does not appear to be a valid MLD biomarker tracker backup file.');
+          return;
+        }
+
+        var counts = { bio: 0, sym: 0, int: 0, mri: 0 };
+
+        if (imported.biomarkers) {
+          var exist = getData(KEYS.biomarkers);
+          imported.biomarkers.forEach(function(entry) {
+            var dup = exist.some(function(e) { return e.date === entry.date && e.ts === entry.ts; });
+            if (!dup) { exist.push(entry); counts.bio++; }
+          });
+          exist.sort(function(a,b) { return a.date.localeCompare(b.date); });
+          setData(KEYS.biomarkers, exist);
+        }
+        if (imported.symptoms) {
+          var exist = getData(KEYS.symptoms);
+          imported.symptoms.forEach(function(entry) {
+            var dup = exist.some(function(e) { return e.date === entry.date && e.ts === entry.ts; });
+            if (!dup) { exist.push(entry); counts.sym++; }
+          });
+          exist.sort(function(a,b) { return a.date.localeCompare(b.date); });
+          setData(KEYS.symptoms, exist);
+        }
+        if (imported.interventions) {
+          var exist = getData(KEYS.interventions);
+          imported.interventions.forEach(function(entry) {
+            var dup = exist.some(function(e) { return e.date === entry.date && e.ts === entry.ts; });
+            if (!dup) { exist.push(entry); counts.int++; }
+          });
+          exist.sort(function(a,b) { return a.date.localeCompare(b.date); });
+          setData(KEYS.interventions, exist);
+        }
+        if (imported.mri) {
+          var exist = getData(KEYS.mri);
+          imported.mri.forEach(function(entry) {
+            var dup = exist.some(function(e) { return e.date === entry.date && e.ts === entry.ts; });
+            if (!dup) { exist.push(entry); counts.mri++; }
+          });
+          exist.sort(function(a,b) { return a.date.localeCompare(b.date); });
+          setData(KEYS.mri, exist);
+        }
+        if (imported.phase) setSetting(KEYS.phase, imported.phase);
+        if (imported.treatmentDate) setSetting(KEYS.treatmentDate, imported.treatmentDate);
+
+        alert('Import complete. Added: ' + counts.bio + ' lab results, ' + counts.sym + ' symptom entries, ' + counts.int + ' interventions, ' + counts.mri + ' MRI scans.');
+        loadPhase();
+        refreshAll();
+      } catch(err) {
+        alert('Error reading file: ' + err.message);
+      }
+    };
+    reader.readAsText(fileInput.files[0]);
+  }
+
+  function downloadFile(filename, content, type) {
+    var blob = new Blob([content], { type: type });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ===== DELETE FUNCTIONS =====
+  function deleteBioEntry(idx) {
+    if (!confirm('Delete this biomarker entry?')) return;
+    var data = getData(KEYS.biomarkers);
+    data.splice(idx, 1);
+    setData(KEYS.biomarkers, data);
+    refreshAll();
+  }
+  function deleteSymEntry(idx) {
+    if (!confirm('Delete this symptom entry?')) return;
+    var data = getData(KEYS.symptoms);
+    data.splice(idx, 1);
+    setData(KEYS.symptoms, data);
+    refreshAll();
+  }
+  function deleteIntervention(idx) {
+    if (!confirm('Delete this intervention?')) return;
+    var data = getData(KEYS.interventions);
+    data.splice(idx, 1);
+    setData(KEYS.interventions, data);
+    refreshAll();
+  }
+  function deleteMRIEntry(idx) {
+    if (!confirm('Delete this MRI entry?')) return;
+    var data = getData(KEYS.mri);
+    data.splice(idx, 1);
+    setData(KEYS.mri, data);
+    refreshAll();
+  }
+
+  // ===== CLEAR DATA =====
+  function showClearModal() {
+    document.getElementById('clearModal').classList.add('show');
+  }
+  function hideClearModal() {
+    document.getElementById('clearModal').classList.remove('show');
+  }
+  function clearAllData() {
+    Object.keys(KEYS).forEach(function(k) {
+      localStorage.removeItem(KEYS[k]);
+    });
+    hideClearModal();
+    loadPhase();
+    refreshAll();
+    alert('All tracker data has been deleted.');
+  }
+
+  // ===== TABS =====
+  function initTabs() {
+    var tabs = document.querySelectorAll('.tracker-tab');
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        tabs.forEach(function(t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        document.querySelectorAll('.tracker-panel').forEach(function(p) { p.classList.remove('active'); });
+        var panelId = 'panel-' + tab.getAttribute('data-tab');
+        document.getElementById(panelId).classList.add('active');
+        // Refresh relevant panel
+        var tabName = tab.getAttribute('data-tab');
+        if (tabName === 'charts') refreshCharts();
+        else if (tabName === 'timeline') refreshTimeline();
+        else if (tabName === 'export') refreshDoctorSummary();
+      });
+
+      // Keyboard navigation
+      tab.addEventListener('keydown', function(e) {
+        var allTabs = Array.from(tabs);
+        var idx = allTabs.indexOf(tab);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          var next = allTabs[(idx + 1) % allTabs.length];
+          next.click();
+          next.focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          var prev = allTabs[(idx - 1 + allTabs.length) % allTabs.length];
+          prev.click();
+          prev.focus();
+        }
+      });
+    });
+  }
+
+  // ===== REFRESH ALL =====
+  function refreshAll() {
+    refreshInterventionList();
+    refreshMRIHistory();
+    // Only refresh expensive panels if active
+    var activeTab = document.querySelector('.tracker-tab.active');
+    if (activeTab) {
+      var tabName = activeTab.getAttribute('data-tab');
+      if (tabName === 'charts') refreshCharts();
+      else if (tabName === 'timeline') refreshTimeline();
+      else if (tabName === 'export') refreshDoctorSummary();
+    }
+    // Safety alerts (always check)
+    var bioData = getData(KEYS.biomarkers);
+    var alerts = checkSafetyFlags(bioData);
+    // Show safety alert at top of entry panel if present
+    var existingAlert = document.getElementById('safetyAlertEntry');
+    if (existingAlert) existingAlert.remove();
+    if (alerts.length > 0) {
+      var entryPanel = document.getElementById('panel-entry');
+      var alertDiv = document.createElement('div');
+      alertDiv.id = 'safetyAlertEntry';
+      alertDiv.className = 'safety-alert';
+      alertDiv.innerHTML = '<h3>Safety Flags</h3><ul>' +
+        alerts.map(function(a) { return '<li>' + a + '</li>'; }).join('') +
+        '</ul><p style="margin-top:8px;font-weight:600;">Discuss these values with your medical team.</p>';
+      entryPanel.insertBefore(alertDiv, entryPanel.firstChild);
+    }
+  }
+
+  // ===== INIT =====
+  function init() {
+    // Set today as default dates
+    var today = new Date().toISOString().split('T')[0];
+    ['bioDate', 'symptomDate', 'intDate', 'mriDate'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && !el.value) el.value = today;
+    });
+
+    // Phase change listeners
+    document.getElementById('phaseSelect').addEventListener('change', savePhase);
+    document.getElementById('treatmentDate').addEventListener('change', savePhase);
+
+    loadPhase();
+    initTabs();
+    refreshAll();
+
+    // Handle window resize for charts
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        var activeTab = document.querySelector('.tracker-tab.active');
+        if (activeTab && activeTab.getAttribute('data-tab') === 'charts') {
+          refreshCharts();
+        }
+      }, 250);
+    });
+  }
+
+  // Run init when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // ===== PUBLIC API =====
+  return {
+    saveBiomarkers: saveBiomarkers,
+    saveSymptoms: saveSymptoms,
+    saveIntervention: saveIntervention,
+    saveMRI: saveMRI,
+    exportJSON: exportJSON,
+    importJSON: importJSON,
+    copyDoctorSummary: copyDoctorSummary,
+    showClearModal: showClearModal,
+    hideClearModal: hideClearModal,
+    clearAllData: clearAllData,
+    deleteBioEntry: deleteBioEntry,
+    deleteSymEntry: deleteSymEntry,
+    deleteIntervention: deleteIntervention,
+    deleteMRIEntry: deleteMRIEntry
+  };
+})();
+</script>
+</body>
+</html>

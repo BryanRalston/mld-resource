@@ -70,12 +70,20 @@
         { file: 'resources/glossary.html', title: 'Glossary of Terms', k: 'glossary terms definitions medical vocabulary ARSA sulfatide myelin leukodystrophy lysosomal enzyme demyelination autosomal recessive' },
         { file: 'resources/references.html', title: 'References & Further Reading', k: 'references sources citations NIH NORD GeneReviews medical literature research papers guidelines consensus' }
       ]
+    },
+    {
+      folder: 'tools', title: 'Tools', pages: [
+        { file: 'tools/symptom-tracker.html', title: 'Symptom Timeline & Tracker', k: 'symptom tracker timeline diary log motor decline seizures spasticity pain irritability speech swallowing vision hearing fatigue sleep behavioral severity backup export print doctor' },
+        { file: 'tools/symptom-navigator.html', title: 'Symptom Navigator', k: 'symptom navigator assessment checklist specialist gap analysis red flag alert testing recommendation motor neurological communication feeding pain vision hearing respiratory sleep autonomic severity routing' },
+        { file: 'tools/biomarker-tracker.html', title: 'Biomarker & Monitoring Tracker', k: 'biomarker tracker ARSA enzyme sulfatide NfL neurofilament chimerism engraftment WBC ANC platelets hemoglobin MRI severity score motor function GMFM speech feeding seizures pain interventions baclofen levetiracetam gabapentin botulinum gene therapy HSCT monitoring labs charts export doctor summary' },
+        { file: 'tools/doctor-letter.html', title: 'Doctor Letter', k: 'doctor letter medical summary print provider ER emergency hospital specialist anesthesia seizure airway aspiration medications pain assessment monitoring MLD ARSA gene therapy HSCT treatment' }
+      ]
     }
   ];
 
   // ===== RESOLVE ROOT =====
   var path = window.location.pathname;
-  var isRoot = /\/(index\.html)?$/.test(path) && !/\/(basics|treatment|care|family|financial|research|resources)\//.test(path);
+  var isRoot = /\/(index\.html)?$/.test(path) && !/\/(basics|treatment|care|family|financial|research|resources|tools)\//.test(path);
   var ROOT = isRoot ? './' : '../';
 
   // ===== BUILD SIDEBAR =====
