@@ -413,7 +413,13 @@ mark.search-highlight {
     border-radius: 0 !important;
     border-left: none !important;
     border-right: none !important;
+    z-index: 1200 !important;
   }
+  .search-dropdown a {
+    -webkit-tap-highlight-color: rgba(59,130,246,0.2);
+    touch-action: manipulation;
+  }
+  .site-header { z-index: 1100; }
   .search-dropdown-overlay {
     display: none;
     position: fixed;
